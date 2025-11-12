@@ -1,0 +1,118 @@
+{
+    "data": [
+        {
+            "id": "digimon-card-game",
+            "name": "Digimon Card Game",
+            "count": 7785,
+            "cards_count": 7785,
+            "sets_count": 83,
+            "last_updated": 1762851049
+        },
+        {
+            "id": "disney-lorcana",
+            "name": "Disney Lorcana",
+            "count": 2592,
+            "cards_count": 2592,
+            "sets_count": 15,
+            "last_updated": 1762892736
+        },
+        {
+            "id": "flesh-and-blood-tcg",
+            "name": "Flesh and Blood TCG",
+            "count": 7643,
+            "cards_count": 7643,
+            "sets_count": 113,
+            "last_updated": 1762877131
+        },
+        {
+            "id": "grand-archive-tcg",
+            "name": "Grand Archive TCG",
+            "count": 2860,
+            "cards_count": 2860,
+            "sets_count": 39,
+            "last_updated": 1762880068
+        },
+        {
+            "id": "gundam-card-game",
+            "name": "Gundam Card Game",
+            "count": 772,
+            "cards_count": 772,
+            "sets_count": 13,
+            "last_updated": 1762851049
+        },
+        {
+            "id": "magic-the-gathering",
+            "name": "Magic: The Gathering",
+            "count": 105473,
+            "cards_count": 105473,
+            "sets_count": 425,
+            "last_updated": 1762893073
+        },
+        {
+            "id": "one-piece-card-game",
+            "name": "One Piece Card Game",
+            "count": 5645,
+            "cards_count": 5645,
+            "sets_count": 68,
+            "last_updated": 1762878169
+        },
+        {
+            "id": "pokemon",
+            "name": "Pokemon",
+            "count": 29623,
+            "cards_count": 29623,
+            "sets_count": 229,
+            "last_updated": 1762883170
+        },
+        {
+            "id": "pokemon-japan",
+            "name": "Pokemon Japan",
+            "count": 17930,
+            "cards_count": 17930,
+            "sets_count": 409,
+            "last_updated": 1762880068
+        },
+        {
+            "id": "riftbound-league-of-legends-trading-card-game",
+            "name": "Riftbound: League of Legends Trading Card Game",
+            "count": 434,
+            "cards_count": 434,
+            "sets_count": 6,
+            "last_updated": 1762885475
+        },
+        {
+            "id": "star-wars-unlimited",
+            "name": "Star Wars: Unlimited",
+            "count": 5459,
+            "cards_count": 5459,
+            "sets_count": 20,
+            "last_updated": 1762885475
+        },
+        {
+            "id": "union-arena",
+            "name": "Union Arena",
+            "count": 3916,
+            "cards_count": 3916,
+            "sets_count": 52,
+            "last_updated": 1762851049
+        },
+        {
+            "id": "yugioh",
+            "name": "YuGiOh",
+            "count": 44121,
+            "cards_count": 44121,
+            "sets_count": 600,
+            "last_updated": 1762875981
+        }
+    ],
+    "_metadata": {
+        "apiRequestLimit": 1000,
+        "apiDailyLimit": 100,
+        "apiRateLimit": 10,
+        "apiRequestsUsed": 114,
+        "apiDailyRequestsUsed": 1,
+        "apiRequestsRemaining": 886,
+        "apiDailyRequestsRemaining": 99,
+        "apiPlan": "Free Tier"
+    }
+}
