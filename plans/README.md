@@ -7,6 +7,16 @@ This directory contains detailed implementation plans organized by phase. Each p
 ```
 plans/
 ├── README.md (this file)
+├── phase-0-setup/
+│   ├── README.md
+│   ├── 01-prerequisites-dependencies.md
+│   ├── 02-environment-variables.md
+│   ├── 03-database-setup.md
+│   ├── 04-redis-setup.md
+│   ├── 05-create-initial-user.md
+│   ├── 06-authentication-setup.md
+│   ├── 07-bullmq-configuration.md
+│   └── 08-development-workflow.md
 ├── phase-1-foundation/
 │   ├── README.md
 │   ├── 01-database-migrations.md
@@ -55,6 +65,17 @@ plans/
 ```
 
 ## Phase Overview
+
+### Phase 0: Setup & Configuration
+**Priority**: Must have (first)
+- Prerequisites & dependencies
+- Environment variables
+- Database setup
+- Redis setup
+- Create initial user
+- Authentication setup
+- BullMQ configuration
+- Development workflow
 
 ### Phase 1: Foundation & Database Setup
 **Priority**: Must have
@@ -109,7 +130,7 @@ plans/
 
 ## How to Use
 
-1. Start with Phase 1 and work through each phase sequentially
+1. Start with Phase 0 (Setup & Configuration) and work through each phase sequentially
 2. Each phase directory contains a README with an overview
 3. Individual plan files contain detailed steps for each task
 4. Mark tasks as complete as you work through them
