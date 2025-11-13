@@ -1,113 +1,3 @@
-<template>
-  <AppLayout>
-    <PageHeader :title="card.name" :subtitle="cardSubtitle">
-      <template #actions>
-        <Button
-          label="Back to Set"
-          icon="pi pi-arrow-left"
-          severity="secondary"
-          @click="navigate(`/sets/${card.set?.id}/cards`)"
-        />
-      </template>
-    </PageHeader>
-
-    <div class="grid gap-6 lg:grid-cols-3">
-      <div class="flex flex-col gap-6 lg:col-span-1">
-        <SectionCard title="Card Details">
-          <form class="flex flex-col gap-3" @submit.prevent="submitCard">
-            <div class="flex flex-col gap-1">
-              <label class="text-sm text-600">Name</label>
-              <InputText v-model="cardForm.name" required />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label class="text-sm text-600">Number</label>
-              <InputText v-model="cardForm.number" />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label class="text-sm text-600">Rarity</label>
-              <InputText v-model="cardForm.rarity" />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label class="text-sm text-600">Details (JSON)</label>
-              <Textarea v-model="cardForm.details" rows="4" auto-resize />
-            </div>
-            <div class="flex justify-end">
-              <Button type="submit" label="Save" icon="pi pi-save" :loading="cardForm.processing" />
-            </div>
-          </form>
-        </SectionCard>
-
-        <SectionCard title="Inventory Snapshot" subtitle="Latest quantities and price updates">
-          <div v-if="inventoryItem" class="flex flex-col gap-3">
-            <div class="flex flex-col gap-1">
-              <span class="text-sm text-600">Notes</span>
-              <span>{{ inventoryItem.notes ?? '—' }}</span>
-            </div>
-            <div class="flex flex-col gap-1">
-              <span class="text-sm text-600">Variants</span>
-              <ul class="list-none m-0 p-0 flex flex-col gap-2">
-                <li
-                  v-for="variant in inventoryItem.variants"
-                  :key="variant.id"
-                  class="surface-100 rounded-md p-3"
-                >
-                  <div class="flex justify-between">
-                    <span class="font-medium">
-                      {{ variant.details?.condition ?? 'Unknown' }}
-                    </span>
-                    <span class="text-sm text-600"> Qty: {{ variant.quantity }} </span>
-                  </div>
-                  <small class="block text-600">
-                    Last price update: {{ formatRelative(variant.lastPriceUpdateAt) }}
-                  </small>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <Message
-            v-else
-            severity="info"
-            icon="pi pi-info-circle"
-            text="This card is not yet in your inventory."
-          />
-        </SectionCard>
-      </div>
-
-      <div class="lg:col-span-2">
-        <SectionCard title="Variants" subtitle="Update pricing and metadata">
-          <Table :value="variantRows" dataKey="id">
-            <Column field="condition" header="Condition" />
-            <Column field="printing" header="Printing" />
-            <Column field="language" header="Language" />
-            <Column header="Price">
-              <template #body="{ data }">
-                <InputNumber
-                  v-model="variantEdits[data.id].price"
-                  mode="currency"
-                  currency="USD"
-                  locale="en-US"
-                  :minFractionDigits="2"
-                />
-              </template>
-            </Column>
-            <Column header="Actions" bodyClass="text-right">
-              <template #body="{ data }">
-                <Button
-                  label="Save"
-                  icon="pi pi-save"
-                  size="small"
-                  :loading="variantEdits[data.id].processing"
-                  @click="updateVariant(data.id)"
-                />
-              </template>
-            </Column>
-          </Table>
-        </SectionCard>
-      </div>
-    </div>
-  </AppLayout>
-</template>
-
 <script setup lang="ts">
 import { computed, reactive } from 'vue'
 import { router, useForm } from '@inertiajs/vue3'
@@ -272,3 +162,113 @@ function formatRelative(timestamp: string | null) {
   return formatter.format(-days, 'days')
 }
 </script>
+
+<template>
+  <AppLayout>
+    <PageHeader :title="card.name" :subtitle="cardSubtitle">
+      <template #actions>
+        <Button
+          label="Back to Set"
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          @click="navigate(`/sets/${card.set?.id}/cards`)"
+        />
+      </template>
+    </PageHeader>
+
+    <div class="grid gap-6 lg:grid-cols-3">
+      <div class="flex flex-col gap-6 lg:col-span-1">
+        <SectionCard title="Card Details">
+          <form class="flex flex-col gap-3" @submit.prevent="submitCard">
+            <div class="flex flex-col gap-1">
+              <label class="text-sm text-600">Name</label>
+              <InputText v-model="cardForm.name" required />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm text-600">Number</label>
+              <InputText v-model="cardForm.number" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm text-600">Rarity</label>
+              <InputText v-model="cardForm.rarity" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm text-600">Details (JSON)</label>
+              <Textarea v-model="cardForm.details" rows="4" auto-resize />
+            </div>
+            <div class="flex justify-end">
+              <Button type="submit" label="Save" icon="pi pi-save" :loading="cardForm.processing" />
+            </div>
+          </form>
+        </SectionCard>
+
+        <SectionCard title="Inventory Snapshot" subtitle="Latest quantities and price updates">
+          <div v-if="inventoryItem" class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-sm text-600">Notes</span>
+              <span>{{ inventoryItem.notes ?? '—' }}</span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-sm text-600">Variants</span>
+              <ul class="list-none m-0 p-0 flex flex-col gap-2">
+                <li
+                  v-for="variant in inventoryItem.variants"
+                  :key="variant.id"
+                  class="surface-100 rounded-md p-3"
+                >
+                  <div class="flex justify-between">
+                    <span class="font-medium">
+                      {{ variant.details?.condition ?? 'Unknown' }}
+                    </span>
+                    <span class="text-sm text-600"> Qty: {{ variant.quantity }} </span>
+                  </div>
+                  <small class="block text-600">
+                    Last price update: {{ formatRelative(variant.lastPriceUpdateAt) }}
+                  </small>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <Message
+            v-else
+            severity="info"
+            icon="pi pi-info-circle"
+            text="This card is not yet in your inventory."
+          />
+        </SectionCard>
+      </div>
+
+      <div class="lg:col-span-2">
+        <SectionCard title="Variants" subtitle="Update pricing and metadata">
+          <Table :value="variantRows" dataKey="id">
+            <Column field="condition" header="Condition" />
+            <Column field="printing" header="Printing" />
+            <Column field="language" header="Language" />
+            <Column header="Price">
+              <template #body="{ data }">
+                <InputNumber
+                  v-model="variantEdits[data.id].price"
+                  mode="currency"
+                  currency="USD"
+                  locale="en-US"
+                  :minFractionDigits="2"
+                />
+              </template>
+            </Column>
+            <Column header="Actions" bodyClass="text-right">
+              <template #body="{ data }">
+                <Button
+                  label="Save"
+                  icon="pi pi-save"
+                  size="small"
+                  :loading="variantEdits[data.id].processing"
+                  @click="updateVariant(data.id)"
+                />
+              </template>
+            </Column>
+          </Table>
+        </SectionCard>
+      </div>
+    </div>
+  </AppLayout>
+</template>

@@ -1,10 +1,3 @@
-<template>
-  <Tag :severity="statusSeverity" :value="statusLabel" rounded class="text-sm font-medium" />
-  <small v-if="timestamp" class="block text-600 mt-1">
-    {{ timestampLabel }} {{ relativeTime }}
-  </small>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import Tag from 'primevue/tag'
@@ -46,3 +39,10 @@ const relativeTime = computed(() => {
   return formatter.format(-diffDays, 'days')
 })
 </script>
+
+<template>
+  <Tag :severity="statusSeverity" :value="statusLabel" rounded class="text-sm font-medium" />
+  <small v-if="timestamp" class="block text-600 mt-1">
+    {{ timestampLabel }} {{ relativeTime }}
+  </small>
+</template>

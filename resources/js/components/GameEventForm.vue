@@ -1,60 +1,3 @@
-<template>
-  <form class="flex flex-col gap-4" @submit.prevent="submit">
-    <input type="hidden" name="game_id" :value="form.game_id" />
-
-    <div class="grid gap-4 md:grid-cols-2">
-      <div>
-        <div class="flex flex-col gap-1">
-          <label class="text-sm text-600">Title</label>
-          <InputText v-model="form.title" required />
-        </div>
-      </div>
-      <div>
-        <div class="flex flex-col gap-1">
-          <label class="text-sm text-600">Event Type</label>
-          <Dropdown
-            v-model="form.event_type"
-            :options="typeOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Select type"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <label class="text-sm text-600">Description</label>
-      <Textarea v-model="form.description" rows="4" auto-resize placeholder="Optional summary" />
-    </div>
-
-    <div class="grid gap-4 md:grid-cols-2">
-      <div>
-        <div class="flex flex-col gap-1">
-          <label class="text-sm text-600">Start Date</label>
-          <Calendar v-model="startDate" date-format="yy-mm-dd" show-icon />
-        </div>
-      </div>
-      <div>
-        <div class="flex flex-col gap-1">
-          <label class="text-sm text-600">End Date</label>
-          <Calendar v-model="endDate" date-format="yy-mm-dd" show-icon />
-        </div>
-      </div>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <Checkbox v-model="form.affects_pricing" :binary="true" />
-      <label>Impacts pricing trends</label>
-    </div>
-
-    <div class="flex justify-end gap-2">
-      <slot name="footer" />
-      <Button type="submit" :label="submitLabel" icon="pi pi-save" :loading="form.processing" />
-    </div>
-  </form>
-</template>
-
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
@@ -131,3 +74,60 @@ function submit() {
   }
 }
 </script>
+
+<template>
+  <form class="flex flex-col gap-4" @submit.prevent="submit">
+    <input type="hidden" name="game_id" :value="form.game_id" />
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm text-600">Title</label>
+          <InputText v-model="form.title" required />
+        </div>
+      </div>
+      <div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm text-600">Event Type</label>
+          <Dropdown
+            v-model="form.event_type"
+            :options="typeOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select type"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm text-600">Description</label>
+      <Textarea v-model="form.description" rows="4" auto-resize placeholder="Optional summary" />
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm text-600">Start Date</label>
+          <Calendar v-model="startDate" date-format="yy-mm-dd" show-icon />
+        </div>
+      </div>
+      <div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm text-600">End Date</label>
+          <Calendar v-model="endDate" date-format="yy-mm-dd" show-icon />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <Checkbox v-model="form.affects_pricing" :binary="true" />
+      <label>Impacts pricing trends</label>
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <slot name="footer" />
+      <Button type="submit" :label="submitLabel" icon="pi pi-save" :loading="form.processing" />
+    </div>
+  </form>
+</template>

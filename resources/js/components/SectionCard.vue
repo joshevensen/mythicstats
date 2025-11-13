@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import Card from 'primevue/card'
+
+defineProps<{
+  title: string
+  subtitle?: string
+}>()
+</script>
+
 <template>
   <Card class="w-full shadow-1 p-4">
     <template #title>
@@ -16,12 +25,3 @@
     </template>
   </Card>
 </template>
-
-<script setup lang="ts">
-import Card from 'primevue/card'
-
-defineProps<{
-  title: string
-  subtitle?: string
-}>()
-</script>

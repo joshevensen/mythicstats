@@ -1,31 +1,3 @@
-<template>
-  <div class="min-h-screen flex flex-col">
-    <Menubar :model="menuItems" class="justify-between gap-3 border-0 px-3 py-2">
-      <template #start>
-        <div class="flex items-center gap-2 cursor-pointer" @click="navigate('/')">
-          <i class="pi pi-chart-line text-primary text-xl"></i>
-          <span class="text-lg font-bold text-color">MythicStats</span>
-        </div>
-      </template>
-
-      <template #end>
-        <div class="flex items-center gap-3">
-          <span class="text-sm text-600" v-if="user">
-            {{ user.fullName ?? user.email }}
-          </span>
-          <Button label="Logout" size="small" severity="secondary" outlined @click="logout" />
-        </div>
-      </template>
-    </Menubar>
-
-    <FlashMessages />
-
-    <main class="flex-1 p-4 md:p-6">
-      <slot />
-    </main>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import { router, usePage } from '@inertiajs/vue3'
@@ -72,6 +44,34 @@ function logout() {
   })
 }
 </script>
+
+<template>
+  <div class="min-h-screen flex flex-col">
+    <Menubar :model="menuItems" class="justify-between gap-3 border-0 px-3 py-2">
+      <template #start>
+        <div class="flex items-center gap-2 cursor-pointer" @click="navigate('/')">
+          <i class="pi pi-chart-line text-primary text-xl"></i>
+          <span class="text-lg font-bold text-color">MythicStats</span>
+        </div>
+      </template>
+
+      <template #end>
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-600" v-if="user">
+            {{ user.fullName ?? user.email }}
+          </span>
+          <Button label="Logout" size="small" severity="secondary" outlined @click="logout" />
+        </div>
+      </template>
+    </Menubar>
+
+    <FlashMessages />
+
+    <main class="flex-1 p-4 md:p-6">
+      <slot />
+    </main>
+  </div>
+</template>
 
 <style scoped>
 .p-menubar {

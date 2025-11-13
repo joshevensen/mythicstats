@@ -1,3 +1,63 @@
+<script setup lang="ts">
+import { router } from '@inertiajs/vue3'
+import Button from 'primevue/button'
+import Column from 'primevue/column'
+import ConfirmPopup from 'primevue/confirmpopup'
+import Tag from 'primevue/tag'
+import { useConfirm } from 'primevue/useconfirm'
+
+import AppLayout from '@/components/AppLayout.vue'
+import PageHeader from '@/components/PageHeader.vue'
+import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
+
+interface Game {
+  id: number
+  name: string
+}
+
+interface GameEvent {
+  id: number
+  title: string
+  eventType: string
+  startDate: string | null
+  endDate: string | null
+  affectsPricing: boolean
+}
+
+const props = defineProps<{
+  game: Game
+  events: GameEvent[]
+  eventTypes: string[]
+}>()
+
+const game = props.game
+const events = props.events
+
+const confirm = useConfirm()
+
+function formatType(type: string) {
+  return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+function navigate(url: string) {
+  router.visit(url)
+}
+
+function destroy(eventId: number, event: Event) {
+  confirm.require({
+    target: event.currentTarget as EventTarget,
+    message: 'Delete this event?',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      router.delete(`/events/${eventId}`, {
+        preserveScroll: true,
+      })
+    },
+  })
+}
+</script>
+
 <template>
   <AppLayout>
     <PageHeader
@@ -66,63 +126,3 @@
     <ConfirmPopup />
   </AppLayout>
 </template>
-
-<script setup lang="ts">
-import { router } from '@inertiajs/vue3'
-import Button from 'primevue/button'
-import Column from 'primevue/column'
-import ConfirmPopup from 'primevue/confirmpopup'
-import Tag from 'primevue/tag'
-import { useConfirm } from 'primevue/useconfirm'
-
-import AppLayout from '@/components/AppLayout.vue'
-import PageHeader from '@/components/PageHeader.vue'
-import SectionCard from '@/components/SectionCard.vue'
-import Table from '@/components/Table.vue'
-
-interface Game {
-  id: number
-  name: string
-}
-
-interface GameEvent {
-  id: number
-  title: string
-  eventType: string
-  startDate: string | null
-  endDate: string | null
-  affectsPricing: boolean
-}
-
-const props = defineProps<{
-  game: Game
-  events: GameEvent[]
-  eventTypes: string[]
-}>()
-
-const game = props.game
-const events = props.events
-
-const confirm = useConfirm()
-
-function formatType(type: string) {
-  return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-}
-
-function navigate(url: string) {
-  router.visit(url)
-}
-
-function destroy(eventId: number, event: Event) {
-  confirm.require({
-    target: event.currentTarget as EventTarget,
-    message: 'Delete this event?',
-    icon: 'pi pi-exclamation-triangle',
-    accept: () => {
-      router.delete(`/events/${eventId}`, {
-        preserveScroll: true,
-      })
-    },
-  })
-}
-</script>

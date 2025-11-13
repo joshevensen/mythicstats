@@ -1,3 +1,33 @@
+<script setup lang="ts">
+import { useForm } from '@inertiajs/vue3'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import FlashMessages from '@/components/FlashMessages.vue'
+
+interface LoginProps {
+  isDevelopment?: boolean
+}
+
+const props = withDefaults(defineProps<LoginProps>(), {
+  isDevelopment: false,
+})
+
+const form = useForm({
+  email: props.isDevelopment ? 'josh@mythicfoxgames.com' : '',
+  password: props.isDevelopment ? 'wNr8nz9Ap6' : '',
+})
+
+function submit() {
+  form.post('/login', {
+    preserveScroll: true,
+    onError: () => {
+      // Errors are handled via flash messages from the server
+    },
+  })
+}
+</script>
+
 <template>
   <div class="min-h-screen flex items-center justify-center surface-ground p-4">
     <div class="w-full max-w-md">
@@ -49,34 +79,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useForm } from '@inertiajs/vue3'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
-import FlashMessages from '@/components/FlashMessages.vue'
-
-interface LoginProps {
-  isDevelopment?: boolean
-}
-
-const props = withDefaults(defineProps<LoginProps>(), {
-  isDevelopment: false,
-})
-
-const form = useForm({
-  email: props.isDevelopment ? 'josh@mythicfoxgames.com' : '',
-  password: props.isDevelopment ? 'wNr8nz9Ap6' : '',
-})
-
-function submit() {
-  form.post('/login', {
-    preserveScroll: true,
-    onError: () => {
-      // Errors are handled via flash messages from the server
-    },
-  })
-}
-</script>
-

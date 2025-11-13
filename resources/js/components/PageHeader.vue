@@ -1,3 +1,10 @@
+<script setup lang="ts">
+defineProps<{
+  title: string
+  subtitle?: string
+}>()
+</script>
+
 <template>
   <header class="flex flex-col gap-2 mb-6">
     <div class="flex items-start justify-between flex-wrap gap-3">
@@ -12,10 +19,3 @@
     <slot />
   </header>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  title: string
-  subtitle?: string
-}>()
-</script>

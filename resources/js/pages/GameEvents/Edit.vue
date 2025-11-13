@@ -1,3 +1,35 @@
+<script setup lang="ts">
+import { router } from '@inertiajs/vue3'
+import Button from 'primevue/button'
+
+import AppLayout from '@/components/AppLayout.vue'
+import PageHeader from '@/components/PageHeader.vue'
+import SectionCard from '@/components/SectionCard.vue'
+import GameEventForm from '@/components/GameEventForm.vue'
+
+const props = defineProps<{
+  game: { id: number; name: string }
+  event: {
+    id: number
+    eventType: string
+    title: string
+    description: string | null
+    startDate: string | null
+    endDate: string | null
+    affectsPricing: boolean
+  }
+  eventTypes: string[]
+}>()
+
+const game = props.game
+const event = props.event
+const eventTypes = props.eventTypes
+
+function navigate(url: string) {
+  router.visit(url)
+}
+</script>
+
 <template>
   <AppLayout>
     <PageHeader :title="`Edit Event · ${game.name}`" subtitle="Update event details and timelines.">
@@ -40,35 +72,3 @@
     </SectionCard>
   </AppLayout>
 </template>
-
-<script setup lang="ts">
-import { router } from '@inertiajs/vue3'
-import Button from 'primevue/button'
-
-import AppLayout from '@/components/AppLayout.vue'
-import PageHeader from '@/components/PageHeader.vue'
-import SectionCard from '@/components/SectionCard.vue'
-import GameEventForm from '@/components/GameEventForm.vue'
-
-const props = defineProps<{
-  game: { id: number; name: string }
-  event: {
-    id: number
-    eventType: string
-    title: string
-    description: string | null
-    startDate: string | null
-    endDate: string | null
-    affectsPricing: boolean
-  }
-  eventTypes: string[]
-}>()
-
-const game = props.game
-const event = props.event
-const eventTypes = props.eventTypes
-
-function navigate(url: string) {
-  router.visit(url)
-}
-</script>

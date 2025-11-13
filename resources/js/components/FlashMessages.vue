@@ -1,7 +1,3 @@
-<template>
-  <Toast position="top-right" />
-</template>
-
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
 import { usePage } from '@inertiajs/vue3'
@@ -56,3 +52,7 @@ watch(flash, () => {
   showMessages()
 })
 </script>
+
+<template>
+  <Toast position="top-right" />
+</template>

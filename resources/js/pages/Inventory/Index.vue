@@ -1,3 +1,52 @@
+<script setup lang="ts">
+import { router } from '@inertiajs/vue3'
+import Button from 'primevue/button'
+import Column from 'primevue/column'
+
+import AppLayout from '@/components/AppLayout.vue'
+import PageHeader from '@/components/PageHeader.vue'
+import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
+import TrackedStatus from '@/components/TrackedStatus.vue'
+
+interface InventoryItemRow {
+  id: number
+  notes: string | null
+  totalQuantity: number
+  totalValue: number
+  lastPriceUpdateAt: string | null
+  card: {
+    id: number
+    name: string
+    number: string | null
+    set: { id: number; name: string } | null
+  } | null
+}
+
+const props = defineProps<{
+  inventoryItems: InventoryItemRow[]
+}>()
+
+const inventoryItems = props.inventoryItems
+
+function formatCurrency(amount: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount)
+}
+
+function navigate(url: string) {
+  router.visit(url)
+}
+
+function updatePrices() {
+  router.post('/inventory/update-prices', undefined, {
+    preserveScroll: true,
+  })
+}
+</script>
+
 <template>
   <AppLayout>
     <PageHeader title="Inventory" subtitle="Track owned cards, quantities, and live market prices.">
@@ -55,52 +104,3 @@
     </SectionCard>
   </AppLayout>
 </template>
-
-<script setup lang="ts">
-import { router } from '@inertiajs/vue3'
-import Button from 'primevue/button'
-import Column from 'primevue/column'
-
-import AppLayout from '@/components/AppLayout.vue'
-import PageHeader from '@/components/PageHeader.vue'
-import SectionCard from '@/components/SectionCard.vue'
-import Table from '@/components/Table.vue'
-import TrackedStatus from '@/components/TrackedStatus.vue'
-
-interface InventoryItemRow {
-  id: number
-  notes: string | null
-  totalQuantity: number
-  totalValue: number
-  lastPriceUpdateAt: string | null
-  card: {
-    id: number
-    name: string
-    number: string | null
-    set: { id: number; name: string } | null
-  } | null
-}
-
-const props = defineProps<{
-  inventoryItems: InventoryItemRow[]
-}>()
-
-const inventoryItems = props.inventoryItems
-
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount)
-}
-
-function navigate(url: string) {
-  router.visit(url)
-}
-
-function updatePrices() {
-  router.post('/inventory/update-prices', undefined, {
-    preserveScroll: true,
-  })
-}
-</script>

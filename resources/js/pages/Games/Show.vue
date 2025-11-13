@@ -1,3 +1,102 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { router } from '@inertiajs/vue3'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Column from 'primevue/column'
+import InputText from 'primevue/inputtext'
+import Tag from 'primevue/tag'
+
+import AppLayout from '@/components/AppLayout.vue'
+import PageHeader from '@/components/PageHeader.vue'
+import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
+import TrackedStatus from '@/components/TrackedStatus.vue'
+
+interface TrackedGame {
+  id: number
+  isActive: boolean
+  lastSetsDiscoveryAt: string | null
+}
+
+interface TrackedSet {
+  id: number
+  isActive: boolean
+  lastSyncAt: string | null
+}
+
+interface Game {
+  id: number
+  name: string
+  slug: string | null
+  cardsCount: number | null
+  setsCount: number | null
+}
+
+interface SetRow {
+  id: number
+  name: string
+  slug: string | null
+  releaseDate: string | null
+  cardsCount: number | null
+  isTracked: boolean
+  trackedSet: TrackedSet | null
+}
+
+const props = defineProps<{
+  game: Game
+  sets: SetRow[]
+  trackedGame: TrackedGame | null
+}>()
+
+const searchTerm = ref('')
+
+const filteredSets = computed(() => {
+  if (!searchTerm.value) return props.sets
+  const term = searchTerm.value.toLowerCase()
+  return props.sets.filter((set) => set.name.toLowerCase().includes(term))
+})
+
+const game = computed(() => props.game)
+const trackedGame = computed(() => props.trackedGame)
+
+function navigate(url: string) {
+  router.visit(url)
+}
+
+function trackGame() {
+  router.post(`/games/${game.value.id}/track`, undefined, { preserveScroll: true })
+}
+
+function untrackGame() {
+  router.delete(`/games/${game.value.id}/track`, { preserveScroll: true })
+}
+
+function toggleGame() {
+  router.patch(`/games/${game.value.id}/track`, undefined, { preserveScroll: true })
+}
+
+function discoverSets() {
+  router.post(`/games/${game.value.id}/discover-sets`, undefined, { preserveScroll: true })
+}
+
+function trackSet(setId: number) {
+  router.post(`/sets/${setId}/track`, undefined, { preserveScroll: true })
+}
+
+function untrackSet(setId: number) {
+  router.delete(`/sets/${setId}/track`, { preserveScroll: true })
+}
+
+function toggleSet(setId: number) {
+  router.patch(`/sets/${setId}/track`, undefined, { preserveScroll: true })
+}
+
+function syncSet(setId: number) {
+  router.post(`/sets/${setId}/sync`, undefined, { preserveScroll: true })
+}
+</script>
+
 <template>
   <AppLayout>
     <PageHeader :title="game.name" subtitle="Manage tracked sets and manual discovery.">
@@ -149,102 +248,3 @@
     </SectionCard>
   </AppLayout>
 </template>
-
-<script setup lang="ts">
-import { computed, ref } from 'vue'
-import { router } from '@inertiajs/vue3'
-import Button from 'primevue/button'
-import Card from 'primevue/card'
-import Column from 'primevue/column'
-import InputText from 'primevue/inputtext'
-import Tag from 'primevue/tag'
-
-import AppLayout from '@/components/AppLayout.vue'
-import PageHeader from '@/components/PageHeader.vue'
-import SectionCard from '@/components/SectionCard.vue'
-import Table from '@/components/Table.vue'
-import TrackedStatus from '@/components/TrackedStatus.vue'
-
-interface TrackedGame {
-  id: number
-  isActive: boolean
-  lastSetsDiscoveryAt: string | null
-}
-
-interface TrackedSet {
-  id: number
-  isActive: boolean
-  lastSyncAt: string | null
-}
-
-interface Game {
-  id: number
-  name: string
-  slug: string | null
-  cardsCount: number | null
-  setsCount: number | null
-}
-
-interface SetRow {
-  id: number
-  name: string
-  slug: string | null
-  releaseDate: string | null
-  cardsCount: number | null
-  isTracked: boolean
-  trackedSet: TrackedSet | null
-}
-
-const props = defineProps<{
-  game: Game
-  sets: SetRow[]
-  trackedGame: TrackedGame | null
-}>()
-
-const searchTerm = ref('')
-
-const filteredSets = computed(() => {
-  if (!searchTerm.value) return props.sets
-  const term = searchTerm.value.toLowerCase()
-  return props.sets.filter((set) => set.name.toLowerCase().includes(term))
-})
-
-const game = computed(() => props.game)
-const trackedGame = computed(() => props.trackedGame)
-
-function navigate(url: string) {
-  router.visit(url)
-}
-
-function trackGame() {
-  router.post(`/games/${game.value.id}/track`, undefined, { preserveScroll: true })
-}
-
-function untrackGame() {
-  router.delete(`/games/${game.value.id}/track`, { preserveScroll: true })
-}
-
-function toggleGame() {
-  router.patch(`/games/${game.value.id}/track`, undefined, { preserveScroll: true })
-}
-
-function discoverSets() {
-  router.post(`/games/${game.value.id}/discover-sets`, undefined, { preserveScroll: true })
-}
-
-function trackSet(setId: number) {
-  router.post(`/sets/${setId}/track`, undefined, { preserveScroll: true })
-}
-
-function untrackSet(setId: number) {
-  router.delete(`/sets/${setId}/track`, { preserveScroll: true })
-}
-
-function toggleSet(setId: number) {
-  router.patch(`/sets/${setId}/track`, undefined, { preserveScroll: true })
-}
-
-function syncSet(setId: number) {
-  router.post(`/sets/${setId}/sync`, undefined, { preserveScroll: true })
-}
-</script>

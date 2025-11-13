@@ -1,3 +1,112 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { router } from '@inertiajs/vue3'
+import Button from 'primevue/button'
+import Column from 'primevue/column'
+import ProgressBar from 'primevue/progressbar'
+import Tag from 'primevue/tag'
+
+import AppLayout from '@/components/AppLayout.vue'
+import PageHeader from '@/components/PageHeader.vue'
+import StatCard from '@/components/StatCard.vue'
+import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
+import TrackedStatus from '@/components/TrackedStatus.vue'
+
+interface ApiStatus {
+  plan?: string | null
+  canMakeRequest: boolean
+  resetTime?: string | null
+  monthly: { used?: number | null; limit?: number | null }
+  daily: { used?: number | null; limit?: number | null }
+}
+
+interface DashboardProps {
+  inventorySummary: {
+    totalCards: number
+    totalQuantity: number
+    totalValue: number
+  }
+  apiStatus: ApiStatus
+  recentActivity: {
+    syncs: Array<{
+      id: number
+      lastSyncAt: string | null
+      set: {
+        id: number
+        name: string
+        releaseDate: string | null
+        game: { id: number; name: string } | null
+      } | null
+    }>
+    priceUpdates: Array<{
+      id: number
+      lastPriceUpdateAt: string | null
+      price: number | null
+      condition: string | null
+      inventoryItem: {
+        id: number
+        card: { id: number; name: string; set?: { id: number; name: string } | null } | null
+      } | null
+    }>
+  }
+}
+
+const props = defineProps<DashboardProps>()
+
+const inventorySummary = computed(() => props.inventorySummary)
+const apiStatus = computed(() => props.apiStatus)
+const recentActivity = computed(() => props.recentActivity)
+
+const monthlyUsagePercentage = computed(() => {
+  const used = apiStatus.value.monthly.used ?? 0
+  const limit = apiStatus.value.monthly.limit ?? 0
+  if (!limit) return 0
+  return Math.min(100, Math.round((used / limit) * 100))
+})
+
+const dailyUsagePercentage = computed(() => {
+  const used = apiStatus.value.daily.used ?? 0
+  const limit = apiStatus.value.daily.limit ?? 0
+  if (!limit) return 0
+  return Math.min(100, Math.round((used / limit) * 100))
+})
+
+const resetTimeRelative = computed(() => formatRelative(apiStatus.value.resetTime))
+
+function formatRelative(timestamp?: string | null) {
+  if (!timestamp) return 'unknown'
+  const date = new Date(timestamp)
+  if (Number.isNaN(date.getTime())) {
+    return 'unknown'
+  }
+  const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+  const diff = date.getTime() - Date.now()
+  const minutes = Math.round(diff / 60000)
+  if (Math.abs(minutes) < 60) {
+    return formatter.format(Math.round(minutes), 'minutes')
+  }
+  const hours = Math.round(minutes / 60)
+  if (Math.abs(hours) < 24) {
+    return formatter.format(hours, 'hours')
+  }
+  const days = Math.round(hours / 24)
+  return formatter.format(days, 'days')
+}
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
+function navigate(path: string) {
+  router.visit(path)
+}
+</script>
+
 <template>
   <AppLayout>
     <PageHeader title="Dashboard" subtitle="Stay on top of tracking status and API usage.">
@@ -139,112 +248,3 @@
     </div>
   </AppLayout>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { router } from '@inertiajs/vue3'
-import Button from 'primevue/button'
-import Column from 'primevue/column'
-import ProgressBar from 'primevue/progressbar'
-import Tag from 'primevue/tag'
-
-import AppLayout from '@/components/AppLayout.vue'
-import PageHeader from '@/components/PageHeader.vue'
-import StatCard from '@/components/StatCard.vue'
-import SectionCard from '@/components/SectionCard.vue'
-import Table from '@/components/Table.vue'
-import TrackedStatus from '@/components/TrackedStatus.vue'
-
-interface ApiStatus {
-  plan?: string | null
-  canMakeRequest: boolean
-  resetTime?: string | null
-  monthly: { used?: number | null; limit?: number | null }
-  daily: { used?: number | null; limit?: number | null }
-}
-
-interface DashboardProps {
-  inventorySummary: {
-    totalCards: number
-    totalQuantity: number
-    totalValue: number
-  }
-  apiStatus: ApiStatus
-  recentActivity: {
-    syncs: Array<{
-      id: number
-      lastSyncAt: string | null
-      set: {
-        id: number
-        name: string
-        releaseDate: string | null
-        game: { id: number; name: string } | null
-      } | null
-    }>
-    priceUpdates: Array<{
-      id: number
-      lastPriceUpdateAt: string | null
-      price: number | null
-      condition: string | null
-      inventoryItem: {
-        id: number
-        card: { id: number; name: string; set?: { id: number; name: string } | null } | null
-      } | null
-    }>
-  }
-}
-
-const props = defineProps<DashboardProps>()
-
-const inventorySummary = computed(() => props.inventorySummary)
-const apiStatus = computed(() => props.apiStatus)
-const recentActivity = computed(() => props.recentActivity)
-
-const monthlyUsagePercentage = computed(() => {
-  const used = apiStatus.value.monthly.used ?? 0
-  const limit = apiStatus.value.monthly.limit ?? 0
-  if (!limit) return 0
-  return Math.min(100, Math.round((used / limit) * 100))
-})
-
-const dailyUsagePercentage = computed(() => {
-  const used = apiStatus.value.daily.used ?? 0
-  const limit = apiStatus.value.daily.limit ?? 0
-  if (!limit) return 0
-  return Math.min(100, Math.round((used / limit) * 100))
-})
-
-const resetTimeRelative = computed(() => formatRelative(apiStatus.value.resetTime))
-
-function formatRelative(timestamp?: string | null) {
-  if (!timestamp) return 'unknown'
-  const date = new Date(timestamp)
-  if (Number.isNaN(date.getTime())) {
-    return 'unknown'
-  }
-  const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
-  const diff = date.getTime() - Date.now()
-  const minutes = Math.round(diff / 60000)
-  if (Math.abs(minutes) < 60) {
-    return formatter.format(Math.round(minutes), 'minutes')
-  }
-  const hours = Math.round(minutes / 60)
-  if (Math.abs(hours) < 24) {
-    return formatter.format(hours, 'hours')
-  }
-  const days = Math.round(hours / 24)
-  return formatter.format(days, 'days')
-}
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 2,
-  }).format(value)
-}
-
-function navigate(path: string) {
-  router.visit(path)
-}
-</script>

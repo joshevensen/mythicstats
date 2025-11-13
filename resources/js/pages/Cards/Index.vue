@@ -1,61 +1,3 @@
-<template>
-  <AppLayout>
-    <PageHeader :title="set.name + ' · Cards'" :subtitle="setSubtitle">
-      <template #actions>
-        <form class="flex gap-2" @submit.prevent="submit">
-          <span class="p-input-icon-left">
-            <i class="pi pi-search" />
-            <InputText v-model="form.search" placeholder="Search by name or number" class="w-72" />
-          </span>
-          <Button label="Search" icon="pi pi-search" type="submit" />
-          <Button
-            v-if="form.search"
-            type="button"
-            label="Reset"
-            icon="pi pi-times"
-            severity="secondary"
-            outlined
-            @click="reset"
-          />
-        </form>
-      </template>
-    </PageHeader>
-
-    <SectionCard title="Card List" :subtitle="`${cards.length} results`">
-      <Table
-        :value="cards"
-        dataKey="id"
-        paginator
-        :rows="25"
-        :rowsPerPageOptions="[25, 50, 100]"
-      >
-        <Column field="name" header="Name" sortable />
-        <Column field="number" header="Number" sortable />
-        <Column field="rarity" header="Rarity" sortable />
-        <Column header="Inventory">
-          <template #body="{ data }">
-            <Tag
-              :severity="data.inInventory ? 'success' : 'secondary'"
-              :value="data.inInventory ? 'In inventory' : 'Not tracked'"
-              rounded
-            />
-          </template>
-        </Column>
-        <Column header="Actions" bodyClass="text-right">
-          <template #body="{ data }">
-            <Button
-              label="View"
-              icon="pi pi-eye"
-              size="small"
-              @click="navigate(`/cards/${data.id}`)"
-            />
-          </template>
-        </Column>
-      </Table>
-    </SectionCard>
-  </AppLayout>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import { router, useForm } from '@inertiajs/vue3'
@@ -122,3 +64,61 @@ function navigate(url: string) {
   router.visit(url)
 }
 </script>
+
+<template>
+  <AppLayout>
+    <PageHeader :title="set.name + ' · Cards'" :subtitle="setSubtitle">
+      <template #actions>
+        <form class="flex gap-2" @submit.prevent="submit">
+          <span class="p-input-icon-left">
+            <i class="pi pi-search" />
+            <InputText v-model="form.search" placeholder="Search by name or number" class="w-72" />
+          </span>
+          <Button label="Search" icon="pi pi-search" type="submit" />
+          <Button
+            v-if="form.search"
+            type="button"
+            label="Reset"
+            icon="pi pi-times"
+            severity="secondary"
+            outlined
+            @click="reset"
+          />
+        </form>
+      </template>
+    </PageHeader>
+
+    <SectionCard title="Card List" :subtitle="`${cards.length} results`">
+      <Table
+        :value="cards"
+        dataKey="id"
+        paginator
+        :rows="25"
+        :rowsPerPageOptions="[25, 50, 100]"
+      >
+        <Column field="name" header="Name" sortable />
+        <Column field="number" header="Number" sortable />
+        <Column field="rarity" header="Rarity" sortable />
+        <Column header="Inventory">
+          <template #body="{ data }">
+            <Tag
+              :severity="data.inInventory ? 'success' : 'secondary'"
+              :value="data.inInventory ? 'In inventory' : 'Not tracked'"
+              rounded
+            />
+          </template>
+        </Column>
+        <Column header="Actions" bodyClass="text-right">
+          <template #body="{ data }">
+            <Button
+              label="View"
+              icon="pi pi-eye"
+              size="small"
+              @click="navigate(`/cards/${data.id}`)"
+            />
+          </template>
+        </Column>
+      </Table>
+    </SectionCard>
+  </AppLayout>
+</template>

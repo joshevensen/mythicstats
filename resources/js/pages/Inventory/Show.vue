@@ -1,92 +1,3 @@
-<template>
-  <AppLayout>
-    <PageHeader :title="cardTitle" :subtitle="cardSubtitle">
-      <template #actions>
-        <div class="flex gap-2">
-          <Button
-            label="Resync Variants"
-            icon="pi pi-refresh"
-            severity="secondary"
-            outlined
-            @click="resync"
-          />
-          <Button
-            label="Back to Inventory"
-            icon="pi pi-arrow-left"
-            severity="secondary"
-            @click="navigate('/inventory')"
-          />
-        </div>
-      </template>
-    </PageHeader>
-
-    <div class="grid gap-6 lg:grid-cols-3">
-      <div class="lg:col-span-1">
-        <SectionCard title="Summary">
-          <div class="flex flex-col gap-3">
-            <div class="flex flex-col gap-1">
-              <span class="text-sm text-600">Total Quantity</span>
-              <span class="text-3xl font-semibold text-color">
-                {{ totalQuantity }}
-              </span>
-            </div>
-            <div class="flex flex-col gap-1">
-              <span class="text-sm text-600">Estimated Value</span>
-              <span class="text-2xl font-semibold text-color">
-                {{ formatCurrency(totalValue) }}
-              </span>
-            </div>
-            <div class="flex flex-col gap-1">
-              <span class="text-sm text-600">Notes</span>
-              <span>{{ inventoryItem.notes ?? '—' }}</span>
-            </div>
-          </div>
-        </SectionCard>
-      </div>
-
-      <div class="lg:col-span-2">
-        <SectionCard title="Variants" subtitle="Update on-hand quantity">
-          <Table :value="inventoryItem.variants" dataKey="id">
-            <Column header="Variant">
-              <template #body="{ data }">
-                <div class="flex flex-col">
-                  <span class="font-semibold text-color">
-                    {{ data.variant?.condition ?? 'Unknown' }}
-                  </span>
-                  <small class="text-600">
-                    {{ data.variant?.printing ?? '—' }} · {{ data.variant?.language ?? '—' }}
-                  </small>
-                </div>
-              </template>
-            </Column>
-            <Column header="Price">
-              <template #body="{ data }">
-                {{ formatCurrency(data.variant?.price ?? 0) }}
-              </template>
-            </Column>
-            <Column header="Quantity">
-              <template #body="{ data }">
-                <InputNumber v-model="variantForms[data.id].quantity" :min="0" />
-              </template>
-            </Column>
-            <Column header="Actions" bodyClass="text-right">
-              <template #body="{ data }">
-                <Button
-                  label="Save"
-                  icon="pi pi-save"
-                  size="small"
-                  :loading="variantForms[data.id].processing"
-                  @click="updateQuantity(data.id)"
-                />
-              </template>
-            </Column>
-          </Table>
-        </SectionCard>
-      </div>
-    </div>
-  </AppLayout>
-</template>
-
 <script setup lang="ts">
 import { computed, reactive } from 'vue'
 import { router } from '@inertiajs/vue3'
@@ -198,3 +109,92 @@ function formatCurrency(amount: number) {
   }).format(amount)
 }
 </script>
+
+<template>
+  <AppLayout>
+    <PageHeader :title="cardTitle" :subtitle="cardSubtitle">
+      <template #actions>
+        <div class="flex gap-2">
+          <Button
+            label="Resync Variants"
+            icon="pi pi-refresh"
+            severity="secondary"
+            outlined
+            @click="resync"
+          />
+          <Button
+            label="Back to Inventory"
+            icon="pi pi-arrow-left"
+            severity="secondary"
+            @click="navigate('/inventory')"
+          />
+        </div>
+      </template>
+    </PageHeader>
+
+    <div class="grid gap-6 lg:grid-cols-3">
+      <div class="lg:col-span-1">
+        <SectionCard title="Summary">
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-sm text-600">Total Quantity</span>
+              <span class="text-3xl font-semibold text-color">
+                {{ totalQuantity }}
+              </span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-sm text-600">Estimated Value</span>
+              <span class="text-2xl font-semibold text-color">
+                {{ formatCurrency(totalValue) }}
+              </span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-sm text-600">Notes</span>
+              <span>{{ inventoryItem.notes ?? '—' }}</span>
+            </div>
+          </div>
+        </SectionCard>
+      </div>
+
+      <div class="lg:col-span-2">
+        <SectionCard title="Variants" subtitle="Update on-hand quantity">
+          <Table :value="inventoryItem.variants" dataKey="id">
+            <Column header="Variant">
+              <template #body="{ data }">
+                <div class="flex flex-col">
+                  <span class="font-semibold text-color">
+                    {{ data.variant?.condition ?? 'Unknown' }}
+                  </span>
+                  <small class="text-600">
+                    {{ data.variant?.printing ?? '—' }} · {{ data.variant?.language ?? '—' }}
+                  </small>
+                </div>
+              </template>
+            </Column>
+            <Column header="Price">
+              <template #body="{ data }">
+                {{ formatCurrency(data.variant?.price ?? 0) }}
+              </template>
+            </Column>
+            <Column header="Quantity">
+              <template #body="{ data }">
+                <InputNumber v-model="variantForms[data.id].quantity" :min="0" />
+              </template>
+            </Column>
+            <Column header="Actions" bodyClass="text-right">
+              <template #body="{ data }">
+                <Button
+                  label="Save"
+                  icon="pi pi-save"
+                  size="small"
+                  :loading="variantForms[data.id].processing"
+                  @click="updateQuantity(data.id)"
+                />
+              </template>
+            </Column>
+          </Table>
+        </SectionCard>
+      </div>
+    </div>
+  </AppLayout>
+</template>
