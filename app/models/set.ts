@@ -27,6 +27,9 @@ export default class Set extends BaseModel {
   @column()
   declare cardsCount: number | null
 
+  @column()
+  declare lastUpdatedAt: number | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -72,11 +75,13 @@ export default class Set extends BaseModel {
     slug?: string
     release_date?: string
     cards_count?: number
+    last_updated?: number
   }) {
     this.justTcgSetId = data.id
     this.name = data.name
     this.slug = data.slug ?? null
     this.releaseDate = data.release_date ? DateTime.fromISO(data.release_date) : null
     this.cardsCount = data.cards_count ?? null
+    this.lastUpdatedAt = data.last_updated ?? null
   }
 }

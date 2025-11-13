@@ -380,17 +380,31 @@ export default class JustTCGService {
 
       // Upsert sets to database
       for (const setData of response.data) {
-        await Set.updateOrCreate(
-          { justTcgSetId: setData.id },
-          {
-            gameId: game.id,
-            justTcgSetId: setData.id,
-            name: setData.name,
-            slug: (setData as any).slug ?? null,
-            releaseDate: setData.release_date ? DateTime.fromISO(setData.release_date) : null,
-            cardsCount: (setData as any).cards_count ?? setData.count ?? null,
-          }
-        )
+        const existingSet = await Set.findBy('just_tcg_set_id', setData.id)
+        const incomingLastUpdated =
+          (setData as any).last_updated ??
+          (setData as any).lastUpdated ??
+          null
+
+        // Skip update if our record is newer or equal
+        if (
+          existingSet &&
+          existingSet.lastUpdatedAt !== null &&
+          incomingLastUpdated !== null &&
+          existingSet.lastUpdatedAt >= incomingLastUpdated
+        ) {
+          continue
+        }
+
+        await Set.updateOrCreate({ justTcgSetId: setData.id }, {
+          gameId: game.id,
+          justTcgSetId: setData.id,
+          name: setData.name,
+          slug: (setData as any).slug ?? null,
+          releaseDate: setData.release_date ? DateTime.fromISO(setData.release_date) : null,
+          cardsCount: (setData as any).cards_count ?? (setData as any).count ?? null,
+          lastUpdatedAt: incomingLastUpdated,
+        })
       }
 
       // Update tracked game timestamp if provided
@@ -445,25 +459,41 @@ export default class JustTCGService {
 
       // Process cards and variants
       for (const cardData of response.data) {
+        const existingCard = await Card.findBy('just_tcg_card_id', cardData.id)
+        const incomingLastUpdated =
+          (cardData as any).last_updated ??
+          (cardData as any).lastUpdated ??
+          null
+
+        // If existing and newer or equal, skip updating the card record
+        const shouldSkipCardUpdate =
+          existingCard &&
+          existingCard.lastUpdatedAt !== null &&
+          incomingLastUpdated !== null &&
+          existingCard.lastUpdatedAt >= incomingLastUpdated
+
         // Upsert card
-        const card = await Card.updateOrCreate(
-          { justTcgCardId: cardData.id },
-          {
-            setId: set.id,
-            justTcgCardId: cardData.id,
-            name: cardData.name,
-            number: cardData.number ?? null,
-            rarity: cardData.rarity ?? null,
-            details: cardData.details
-              ? typeof cardData.details === 'string'
-                ? JSON.parse(cardData.details)
-                : cardData.details
-              : null,
-            tcgplayerId: cardData.tcgplayerId ?? null,
-            mtgjsonId: cardData.mtgjsonId ?? null,
-            scryfallId: cardData.scryfallId ?? null,
-          }
-        )
+        const card = shouldSkipCardUpdate
+          ? existingCard!
+          : await Card.updateOrCreate(
+              { justTcgCardId: cardData.id },
+              {
+                setId: set.id,
+                justTcgCardId: cardData.id,
+                name: cardData.name,
+                number: (cardData as any).number ?? null,
+                rarity: (cardData as any).rarity ?? null,
+                details: (cardData as any).details
+                  ? typeof (cardData as any).details === 'string'
+                    ? JSON.parse((cardData as any).details)
+                    : (cardData as any).details
+                  : null,
+                tcgplayerId: (cardData as any).tcgplayerId ?? (cardData as any).tcgplayer_id ?? null,
+                mtgjsonId: (cardData as any).mtgjsonId ?? (cardData as any).mtgjson_id ?? null,
+                scryfallId: (cardData as any).scryfallId ?? (cardData as any).scryfall_id ?? null,
+                lastUpdatedAt: incomingLastUpdated,
+              }
+            )
 
         // Upsert variants
         if (cardData.variants && cardData.variants.length > 0) {
@@ -540,6 +570,18 @@ export default class JustTCGService {
 
       // Process cards and variants (same logic as getCardsBySet)
       for (const cardData of response.data) {
+        const existingCard = await Card.findBy('just_tcg_card_id', cardData.id)
+        const incomingLastUpdated =
+          (cardData as any).last_updated ??
+          (cardData as any).lastUpdated ??
+          null
+
+        const shouldSkipCardUpdate =
+          existingCard &&
+          existingCard.lastUpdatedAt !== null &&
+          incomingLastUpdated !== null &&
+          existingCard.lastUpdatedAt >= incomingLastUpdated
+
         // Find set by JustTCG ID
         const set = await Set.findBy('justTcgSetId', cardData.set)
         if (!set) {
@@ -548,24 +590,27 @@ export default class JustTCGService {
         }
 
         // Upsert card
-        const card = await Card.updateOrCreate(
-          { justTcgCardId: cardData.id },
-          {
-            setId: set.id,
-            justTcgCardId: cardData.id,
-            name: cardData.name,
-            number: cardData.number ?? null,
-            rarity: cardData.rarity ?? null,
-            details: cardData.details
-              ? typeof cardData.details === 'string'
-                ? JSON.parse(cardData.details)
-                : cardData.details
-              : null,
-            tcgplayerId: cardData.tcgplayerId ?? null,
-            mtgjsonId: cardData.mtgjsonId ?? null,
-            scryfallId: cardData.scryfallId ?? null,
-          }
-        )
+        const card = shouldSkipCardUpdate
+          ? existingCard!
+          : await Card.updateOrCreate(
+              { justTcgCardId: cardData.id },
+              {
+                setId: set.id,
+                justTcgCardId: cardData.id,
+                name: cardData.name,
+                number: (cardData as any).number ?? null,
+                rarity: (cardData as any).rarity ?? null,
+                details: (cardData as any).details
+                  ? typeof (cardData as any).details === 'string'
+                    ? JSON.parse((cardData as any).details)
+                    : (cardData as any).details
+                  : null,
+                tcgplayerId: (cardData as any).tcgplayerId ?? (cardData as any).tcgplayer_id ?? null,
+                mtgjsonId: (cardData as any).mtgjsonId ?? (cardData as any).mtgjson_id ?? null,
+                scryfallId: (cardData as any).scryfallId ?? (cardData as any).scryfall_id ?? null,
+                lastUpdatedAt: incomingLastUpdated,
+              }
+            )
 
         // Upsert variants
         if (cardData.variants && cardData.variants.length > 0) {
@@ -632,6 +677,18 @@ export default class JustTCGService {
 
       // Process cards and variants
       for (const cardData of response.data) {
+        const existingCard = await Card.findBy('just_tcg_card_id', cardData.id)
+        const incomingLastUpdated =
+          (cardData as any).last_updated ??
+          (cardData as any).lastUpdated ??
+          null
+
+        const shouldSkipCardUpdate =
+          existingCard &&
+          existingCard.lastUpdatedAt !== null &&
+          incomingLastUpdated !== null &&
+          existingCard.lastUpdatedAt >= incomingLastUpdated
+
         // Find set by JustTCG ID
         const set = await Set.findBy('justTcgSetId', cardData.set)
         if (!set) {
@@ -640,24 +697,27 @@ export default class JustTCGService {
         }
 
         // Upsert card
-        const card = await Card.updateOrCreate(
-          { justTcgCardId: cardData.id },
-          {
-            setId: set.id,
-            justTcgCardId: cardData.id,
-            name: cardData.name,
-            number: cardData.number ?? null,
-            rarity: cardData.rarity ?? null,
-            details: cardData.details
-              ? typeof cardData.details === 'string'
-                ? JSON.parse(cardData.details)
-                : cardData.details
-              : null,
-            tcgplayerId: cardData.tcgplayerId ?? null,
-            mtgjsonId: cardData.mtgjsonId ?? null,
-            scryfallId: cardData.scryfallId ?? null,
-          }
-        )
+        const card = shouldSkipCardUpdate
+          ? existingCard!
+          : await Card.updateOrCreate(
+              { justTcgCardId: cardData.id },
+              {
+                setId: set.id,
+                justTcgCardId: cardData.id,
+                name: cardData.name,
+                number: (cardData as any).number ?? null,
+                rarity: (cardData as any).rarity ?? null,
+                details: (cardData as any).details
+                  ? typeof (cardData as any).details === 'string'
+                    ? JSON.parse((cardData as any).details)
+                    : (cardData as any).details
+                  : null,
+                tcgplayerId: (cardData as any).tcgplayerId ?? (cardData as any).tcgplayer_id ?? null,
+                mtgjsonId: (cardData as any).mtgjsonId ?? (cardData as any).mtgjson_id ?? null,
+                scryfallId: (cardData as any).scryfallId ?? (cardData as any).scryfall_id ?? null,
+                lastUpdatedAt: incomingLastUpdated,
+              }
+            )
 
         // Upsert variants
         if (cardData.variants && cardData.variants.length > 0) {
@@ -711,6 +771,18 @@ export default class JustTCGService {
     if (response.data && response.data.length > 0) {
       const cardData = response.data[0]
 
+      const existingCard = await Card.findBy('just_tcg_card_id', cardData.id)
+      const incomingLastUpdated =
+        (cardData as any).last_updated ??
+        (cardData as any).lastUpdated ??
+        null
+
+      const shouldSkipCardUpdate =
+        existingCard &&
+        existingCard.lastUpdatedAt !== null &&
+        incomingLastUpdated !== null &&
+        existingCard.lastUpdatedAt >= incomingLastUpdated
+
       // Find set by JustTCG ID
       const set = await Set.findBy('justTcgSetId', cardData.set)
       if (!set) {
@@ -718,24 +790,27 @@ export default class JustTCGService {
       }
 
       // Upsert card
-      const card = await Card.updateOrCreate(
-        { justTcgCardId: cardData.id },
-        {
-          setId: set.id,
-          justTcgCardId: cardData.id,
-          name: cardData.name,
-          number: cardData.number ?? null,
-          rarity: cardData.rarity ?? null,
-          details: cardData.details
-            ? typeof cardData.details === 'string'
-              ? JSON.parse(cardData.details)
-              : cardData.details
-            : null,
-          tcgplayerId: cardData.tcgplayerId ?? null,
-          mtgjsonId: cardData.mtgjsonId ?? null,
-          scryfallId: cardData.scryfallId ?? null,
-        }
-      )
+      const card = shouldSkipCardUpdate
+        ? existingCard!
+        : await Card.updateOrCreate(
+            { justTcgCardId: cardData.id },
+            {
+              setId: set.id,
+              justTcgCardId: cardData.id,
+              name: cardData.name,
+              number: (cardData as any).number ?? null,
+              rarity: (cardData as any).rarity ?? null,
+              details: (cardData as any).details
+                ? typeof (cardData as any).details === 'string'
+                  ? JSON.parse((cardData as any).details)
+                  : (cardData as any).details
+                : null,
+              tcgplayerId: (cardData as any).tcgplayerId ?? (cardData as any).tcgplayer_id ?? null,
+              mtgjsonId: (cardData as any).mtgjsonId ?? (cardData as any).mtgjson_id ?? null,
+              scryfallId: (cardData as any).scryfallId ?? (cardData as any).scryfall_id ?? null,
+              lastUpdatedAt: incomingLastUpdated,
+            }
+          )
 
       // Upsert variants
       if (cardData.variants && cardData.variants.length > 0) {

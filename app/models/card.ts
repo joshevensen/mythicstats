@@ -36,6 +36,9 @@ export default class Card extends BaseModel {
   @column()
   declare scryfallId: string | null
 
+  @column()
+  declare lastUpdatedAt: number | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -87,6 +90,7 @@ export default class Card extends BaseModel {
     tcgplayer_id?: string
     mtgjson_id?: string
     scryfall_id?: string
+    last_updated?: number
   }) {
     this.justTcgCardId = data.id
     this.name = data.name
@@ -96,6 +100,7 @@ export default class Card extends BaseModel {
     this.tcgplayerId = data.tcgplayer_id ?? null
     this.mtgjsonId = data.mtgjson_id ?? null
     this.scryfallId = data.scryfall_id ?? null
+    this.lastUpdatedAt = data.last_updated ?? null
   }
 
   async variantsForCondition(condition: string, printing?: string) {
