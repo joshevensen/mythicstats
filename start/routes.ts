@@ -28,6 +28,7 @@ router
     // Games
     router.get('/games', '#controllers/games_controller.index')
     router.get('/games/:gameId', '#controllers/games_controller.show')
+    router.post('/games/pull', '#controllers/games_controller.syncFromApi')
     router.post('/games/:gameId/track', '#controllers/games_controller.track')
     router.delete('/games/:gameId/track', '#controllers/games_controller.untrack')
     router.patch('/games/:gameId/track', '#controllers/games_controller.toggleActive')

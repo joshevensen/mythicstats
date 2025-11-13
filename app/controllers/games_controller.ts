@@ -123,4 +123,16 @@ export default class GamesController {
     }
     return response.redirect().back()
   }
+
+  async syncFromApi({ auth, response, session }: HttpContext) {
+    const user = await auth.getUserOrFail()
+    const just = new JustTCGService(user)
+    try {
+      await just.getGames()
+      session.flash('success', 'Games refreshed from JustTCG')
+    } catch (error) {
+      session.flash('error', `Failed to refresh games: ${(error as Error).message}`)
+    }
+    return response.redirect().back()
+  }
 }

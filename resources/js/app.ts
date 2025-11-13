@@ -1,4 +1,4 @@
-import { createApp, h, type DefineComponent } from 'vue'
+import { createApp, h, type DefineComponent, type Plugin } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
@@ -7,6 +7,7 @@ import Tooltip from 'primevue/tooltip'
 import Aura from '@primevue/themes/aura'
 
 import './bootstrap'
+import '../css/app.css'
 
 createInertiaApp({
   progress: {
@@ -22,10 +23,10 @@ createInertiaApp({
     props,
     plugin,
   }: {
-    el: unknown
+    el: Record<string, unknown>
     App: DefineComponent
     props: Record<string, unknown>
-    plugin: unknown
+    plugin: Plugin
   }) {
     const vueApp = createApp({ render: () => h(App, props) })
     vueApp.use(plugin)

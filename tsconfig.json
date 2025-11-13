@@ -2,6 +2,27 @@
   "extends": "@adonisjs/tsconfig/tsconfig.app.json",
   "compilerOptions": {
     "rootDir": "./",
-    "outDir": "./build"
-  }
+    "outDir": "./build",
+    "baseUrl": ".",
+    "types": ["@types/node", "vite/client"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["resources/js/*"]
+    }
+  },
+  "include": [
+    "ace.js",
+    "adonisrc.ts",
+    "tsconfig.json",
+    "env.ts",
+    "start/**/*.ts",
+    "app/**/*.ts",
+    "config/**/*.ts",
+    "database/**/*.ts",
+    "resources/js/**/*.ts",
+    "resources/js/**/*.vue",
+    "resources/js/**/*.d.ts"
+  ],
+  "exclude": ["build", "node_modules"]
 }

@@ -2,10 +2,20 @@
   <AppLayout>
     <PageHeader title="Games" subtitle="Track games to discover sets and keep data in sync.">
       <template #actions>
-        <span class="p-input-icon-left">
-          <i class="pi pi-search" />
-          <InputText v-model="searchTerm" placeholder="Search games" class="w-15rem" />
-        </span>
+        <div class="flex items-center gap-3">
+          <Button
+            label="Refresh from JustTCG"
+            icon="pi pi-cloud-download"
+            severity="secondary"
+            outlined
+            size="small"
+            @click="refreshGames"
+          />
+          <span class="p-input-icon-left">
+            <i class="pi pi-search" />
+            <InputText v-model="searchTerm" placeholder="Search games" class="w-15rem" />
+          </span>
+        </div>
       </template>
     </PageHeader>
 
@@ -154,5 +164,9 @@ function discoverSets(gameId: number) {
   router.post(`/games/${gameId}/discover-sets`, undefined, {
     preserveScroll: true,
   })
+}
+
+function refreshGames() {
+  router.post('/games/pull', undefined, { preserveScroll: true })
 }
 </script>

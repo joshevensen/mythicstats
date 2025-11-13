@@ -167,18 +167,20 @@ export default class JustTCGService {
    */
   async checkRateLimit(count: number = 1): Promise<{ canMake: boolean; reason?: string }> {
     // Check monthly limit
-    if ((this.user.apiRequestsRemaining ?? 0) < count) {
+    const monthlyRemaining = this.user.apiRequestsRemaining
+    if (monthlyRemaining !== null && monthlyRemaining !== undefined && monthlyRemaining < count) {
       return {
         canMake: false,
-        reason: `Monthly limit exceeded. ${this.user.apiRequestsRemaining ?? 0} remaining, need ${count}`,
+        reason: `Monthly limit exceeded. ${monthlyRemaining} remaining, need ${count}`,
       }
     }
 
     // Check daily limit
-    if ((this.user.apiDailyRequestsRemaining ?? 0) < count) {
+    const dailyRemaining = this.user.apiDailyRequestsRemaining
+    if (dailyRemaining !== null && dailyRemaining !== undefined && dailyRemaining < count) {
       return {
         canMake: false,
-        reason: `Daily limit exceeded. ${this.user.apiDailyRequestsRemaining ?? 0} remaining, need ${count}`,
+        reason: `Daily limit exceeded. ${dailyRemaining} remaining, need ${count}`,
       }
     }
 
