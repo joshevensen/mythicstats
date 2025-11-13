@@ -25,9 +25,9 @@ export default defineConfig({
       ctx.inertia.always(() => {
         const flashBag = ctx.session?.flashMessages?.all?.() ?? {}
         return {
-          success: flashBag.success?.[0] ?? null,
-          error: flashBag.error?.[0] ?? null,
-          warning: flashBag.warning?.[0] ?? null,
+          success: Array.isArray(flashBag.success) ? flashBag.success[0] : flashBag.success ?? null,
+          error: Array.isArray(flashBag.error) ? flashBag.error[0] : flashBag.error ?? null,
+          warning: Array.isArray(flashBag.warning) ? flashBag.warning[0] : flashBag.warning ?? null,
         }
       }),
   },

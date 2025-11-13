@@ -15,9 +15,11 @@ router
   .group(() => {
     router.get('/login', '#controllers/auth_controller.showLogin')
     router.post('/login', '#controllers/auth_controller.login')
-    router.post('/logout', '#controllers/auth_controller.logout')
   })
   .use(middleware.guest())
+
+// Logout route (accessible to authenticated users)
+router.post('/logout', '#controllers/auth_controller.logout')
 
 // Protected routes
 router

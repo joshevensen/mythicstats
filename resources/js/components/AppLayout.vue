@@ -1,12 +1,13 @@
 <template>
   <div class="min-h-screen flex flex-col">
-    <Menubar :model="menuItems" class="surface-section border-0 shadow-1 px-3 py-2">
+    <Menubar :model="menuItems" class="justify-between gap-3 border-0 px-3 py-2">
       <template #start>
         <div class="flex items-center gap-2 cursor-pointer" @click="navigate('/')">
           <i class="pi pi-chart-line text-primary text-xl"></i>
           <span class="text-lg font-bold text-color">MythicStats</span>
         </div>
       </template>
+
       <template #end>
         <div class="flex items-center gap-3">
           <span class="text-sm text-600" v-if="user">
@@ -40,7 +41,7 @@ interface SharedProps {
   } | null
 }
 
-const page = usePage<SharedProps>()
+const page = usePage() as { props: SharedProps }
 const user = computed(() => page.props.auth)
 
 const menuItems = computed(() => [

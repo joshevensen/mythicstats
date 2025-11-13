@@ -118,7 +118,7 @@ function formatDate(value: Date | null) {
 }
 
 function submit() {
-  form.transform((data) => ({
+  form.transform((data: typeof form.data) => ({
     ...data,
     start_date: formatDate(startDate.value),
     end_date: formatDate(endDate.value),

@@ -16,7 +16,7 @@ interface FlashProps {
   }
 }
 
-const page = usePage<FlashProps>()
+const page = usePage() as { props: FlashProps }
 const toast = useToast()
 
 const flash = computed(() => page.props.flash ?? {})
