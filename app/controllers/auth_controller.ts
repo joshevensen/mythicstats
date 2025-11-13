@@ -4,8 +4,8 @@ import { errors } from '@adonisjs/auth'
 import app from '@adonisjs/core/services/app'
 
 export default class AuthController {
-  async showLogin({ view }: HttpContext) {
-    return view.render('auth/login', {
+  async showLogin({ inertia }: HttpContext) {
+    return inertia.render('Auth/Login', {
       isDevelopment: !app.inProduction,
     })
   }

@@ -11,7 +11,8 @@
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed": "node ace db:seed"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
@@ -41,9 +42,9 @@
     "@adonisjs/shield": "^8.2.0",
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^4.0.0",
+    "@inertiajs/vue3": "^2.2.15",
     "@primevue/themes": "^4.4.1",
     "@vinejs/vine": "^3.0.1",
-    "@inertiajs/vue3": "^2.2.15",
     "bullmq": "^5.63.0",
     "edge.js": "^6.2.1",
     "ioredis": "^5.8.2",
@@ -64,6 +65,7 @@
     "@japa/plugin-adonisjs": "^4.0.0",
     "@japa/runner": "^4.2.0",
     "@swc/core": "1.11.24",
+    "@tailwindcss/postcss": "^4.1.17",
     "@types/ioredis": "^4.28.10",
     "@types/luxon": "^3.7.1",
     "@types/node": "^24.10.1",
