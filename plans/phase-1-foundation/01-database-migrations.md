@@ -1,6 +1,7 @@
 # Database Migrations
 
 ## Overview
+
 Create all database migrations in the correct order to establish the complete database schema.
 
 ## Migration Order
@@ -27,6 +28,7 @@ The migrations must be created in this specific order due to foreign key depende
 **Action**: Add rate limiting columns to existing `users` table
 
 **Columns to add**:
+
 - `api_plan` (string, nullable)
 - `api_monthly_limit` (integer, nullable)
 - `api_daily_limit` (integer, nullable)
@@ -40,6 +42,7 @@ The migrations must be created in this specific order due to foreign key depende
 **Reference**: [Database Schema - users table](../../docs/03-database-schema.md#users)
 
 **Command**:
+
 ```bash
 node ace make:migration add_rate_limiting_to_users
 ```
@@ -53,6 +56,7 @@ node ace make:migration add_rate_limiting_to_users
 **Action**: Create `games` table
 
 **Columns**:
+
 - `id` (bigint, primary key)
 - `just_tcg_game_id` (string, unique, not null)
 - `name` (string, not null)
@@ -64,12 +68,14 @@ node ace make:migration add_rate_limiting_to_users
 - `updated_at` (timestamp)
 
 **Indexes**:
+
 - Unique index on `just_tcg_game_id`
 - Unique index on `slug` (where not null)
 
 **Reference**: [Database Schema - games table](../../docs/03-database-schema.md#games)
 
 **Command**:
+
 ```bash
 node ace make:migration create_games_table
 ```
@@ -83,6 +89,7 @@ node ace make:migration create_games_table
 **Action**: Create `game_events` table
 
 **Columns**:
+
 - `id` (bigint, primary key)
 - `game_id` (bigint, foreign key to games)
 - `event_type` (string, not null) - enum: 'release', 'championship', 'tournament', 'ban', 'other'
@@ -95,6 +102,7 @@ node ace make:migration create_games_table
 - `updated_at` (timestamp)
 
 **Indexes**:
+
 - Index on `game_id`
 - Index on `event_type`
 - Index on `start_date`
@@ -103,6 +111,7 @@ node ace make:migration create_games_table
 **Reference**: [Database Schema - game_events table](../../docs/03-database-schema.md#game_events)
 
 **Command**:
+
 ```bash
 node ace make:migration create_game_events_table
 ```
@@ -116,6 +125,7 @@ node ace make:migration create_game_events_table
 **Action**: Create `sets` table
 
 **Columns**:
+
 - `id` (bigint, primary key)
 - `game_id` (bigint, foreign key to games)
 - `just_tcg_set_id` (string, unique, not null)
@@ -127,6 +137,7 @@ node ace make:migration create_game_events_table
 - `updated_at` (timestamp)
 
 **Indexes**:
+
 - Unique index on `just_tcg_set_id`
 - Index on `game_id`
 - Index on `release_date`
@@ -134,6 +145,7 @@ node ace make:migration create_game_events_table
 **Reference**: [Database Schema - sets table](../../docs/03-database-schema.md#sets)
 
 **Command**:
+
 ```bash
 node ace make:migration create_sets_table
 ```
@@ -147,6 +159,7 @@ node ace make:migration create_sets_table
 **Action**: Create `cards` table
 
 **Columns**:
+
 - `id` (bigint, primary key)
 - `set_id` (bigint, foreign key to sets)
 - `just_tcg_card_id` (string, unique, not null)
@@ -161,6 +174,7 @@ node ace make:migration create_sets_table
 - `updated_at` (timestamp)
 
 **Indexes**:
+
 - Unique index on `just_tcg_card_id`
 - Index on `set_id`
 - Index on `name`
@@ -169,6 +183,7 @@ node ace make:migration create_sets_table
 **Reference**: [Database Schema - cards table](../../docs/03-database-schema.md#cards)
 
 **Command**:
+
 ```bash
 node ace make:migration create_cards_table
 ```
@@ -184,6 +199,7 @@ node ace make:migration create_cards_table
 **Columns**: (See full list in database schema)
 
 **Key columns**:
+
 - `id` (bigint, primary key)
 - `card_id` (bigint, foreign key to cards)
 - `just_tcg_variant_id` (string, unique, not null)
@@ -194,6 +210,7 @@ node ace make:migration create_cards_table
 - `price_history_7d`, `price_history_30d` (jsonb)
 
 **Indexes**:
+
 - Unique index on `just_tcg_variant_id`
 - Index on `card_id`
 - Composite index on `(card_id, condition, printing, language)`
@@ -201,6 +218,7 @@ node ace make:migration create_cards_table
 **Reference**: [Database Schema - card_variants table](../../docs/03-database-schema.md#card_variants)
 
 **Command**:
+
 ```bash
 node ace make:migration create_card_variants_table
 ```
@@ -214,6 +232,7 @@ node ace make:migration create_card_variants_table
 **Action**: Create `tracked_games` pivot table
 
 **Columns**:
+
 - `id` (bigint, primary key)
 - `user_id` (bigint, foreign key to users)
 - `game_id` (bigint, foreign key to games)
@@ -223,12 +242,14 @@ node ace make:migration create_card_variants_table
 - `updated_at` (timestamp)
 
 **Indexes**:
+
 - Unique composite index on `(user_id, game_id)`
 - Index on `is_active`
 
 **Reference**: [Database Schema - tracked_games table](../../docs/03-database-schema.md#tracked_games)
 
 **Command**:
+
 ```bash
 node ace make:migration create_tracked_games_table
 ```
@@ -242,6 +263,7 @@ node ace make:migration create_tracked_games_table
 **Action**: Create `tracked_sets` pivot table
 
 **Columns**:
+
 - `id` (bigint, primary key)
 - `user_id` (bigint, foreign key to users)
 - `set_id` (bigint, foreign key to sets)
@@ -251,6 +273,7 @@ node ace make:migration create_tracked_games_table
 - `updated_at` (timestamp)
 
 **Indexes**:
+
 - Unique composite index on `(user_id, set_id)`
 - Index on `is_active`
 - Index on `last_sync_at`
@@ -258,6 +281,7 @@ node ace make:migration create_tracked_games_table
 **Reference**: [Database Schema - tracked_sets table](../../docs/03-database-schema.md#tracked_sets)
 
 **Command**:
+
 ```bash
 node ace make:migration create_tracked_sets_table
 ```
@@ -271,6 +295,7 @@ node ace make:migration create_tracked_sets_table
 **Action**: Create `inventory_items` table (card-level inventory)
 
 **Columns**:
+
 - `id` (bigint, primary key)
 - `user_id` (bigint, foreign key to users)
 - `card_id` (bigint, foreign key to cards)
@@ -279,6 +304,7 @@ node ace make:migration create_tracked_sets_table
 - `updated_at` (timestamp)
 
 **Indexes**:
+
 - Unique composite index on `(user_id, card_id)`
 - Index on `user_id`
 - Index on `card_id`
@@ -286,6 +312,7 @@ node ace make:migration create_tracked_sets_table
 **Reference**: [Database Schema - inventory_items table](../../docs/03-database-schema.md#inventory_items)
 
 **Command**:
+
 ```bash
 node ace make:migration create_inventory_items_table
 ```
@@ -299,6 +326,7 @@ node ace make:migration create_inventory_items_table
 **Action**: Create `inventory_item_variants` table (variant-level inventory)
 
 **Columns**:
+
 - `id` (bigint, primary key)
 - `inventory_item_id` (bigint, foreign key to inventory_items)
 - `variant_id` (bigint, foreign key to card_variants)
@@ -309,6 +337,7 @@ node ace make:migration create_inventory_items_table
 - `updated_at` (timestamp)
 
 **Indexes**:
+
 - Composite index on `(inventory_item_id, variant_id)`
 - Index on `variant_id`
 - Index on `last_price_update_at`
@@ -316,6 +345,7 @@ node ace make:migration create_inventory_items_table
 **Reference**: [Database Schema - inventory_item_variants table](../../docs/03-database-schema.md#inventory_item_variants)
 
 **Command**:
+
 ```bash
 node ace make:migration create_inventory_item_variants_table
 ```
@@ -327,11 +357,13 @@ node ace make:migration create_inventory_item_variants_table
 After creating all migrations:
 
 1. **Check migration status**:
+
    ```bash
    node ace migration:status
    ```
 
 2. **Run migrations**:
+
    ```bash
    node ace migration:run
    ```
@@ -356,4 +388,3 @@ After creating all migrations:
 - [ ] All columns have correct types
 - [ ] Migrations run successfully
 - [ ] No errors in migration output
-

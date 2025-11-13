@@ -1,6 +1,7 @@
 # Inventory Controller
 
 ## Overview
+
 Create the inventory controller for managing card inventory, including adding/removing cards and updating variant quantities.
 
 ## Step-by-Step Plan
@@ -10,6 +11,7 @@ Create the inventory controller for managing card inventory, including adding/re
 **File**: `app/controllers/inventory_controller.ts`
 
 **Command**:
+
 ```bash
 node ace make:controller Inventory
 ```
@@ -25,6 +27,7 @@ node ace make:controller Inventory
 **Purpose**: List all cards in inventory with quantities and values
 
 **Implementation**:
+
 ```typescript
 import type { HttpContext } from '@adonisjs/core/http'
 import InventoryItem from '#models/inventory_item'
@@ -46,7 +49,7 @@ export default class InventoryController {
     const itemsWithTotals = inventoryItems.map((item) => {
       const totalQuantity = item.variants.reduce((sum, v) => sum + v.quantity, 0)
       const totalValue = item.variants.reduce((sum, v) => {
-        return sum + (v.quantity * (v.variant.price || 0))
+        return sum + v.quantity * (v.variant.price || 0)
       }, 0)
 
       // Get most recent price update
@@ -83,6 +86,7 @@ export default class InventoryController {
 **Purpose**: Show detailed inventory item with all variants
 
 **Implementation**:
+
 ```typescript
 async show({ params, auth, view }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -121,6 +125,7 @@ async show({ params, auth, view }: HttpContext) {
 **Purpose**: Add a card to inventory
 
 **Implementation**:
+
 ```typescript
 import InventoryService from '#services/InventoryService'
 
@@ -154,6 +159,7 @@ async store({ request, auth, response, session }: HttpContext) {
 **Purpose**: Remove card from inventory
 
 **Implementation**:
+
 ```typescript
 async destroy({ params, auth, response, session }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -181,6 +187,7 @@ async destroy({ params, auth, response, session }: HttpContext) {
 **Purpose**: Update quantity for a variant
 
 **Implementation**:
+
 ```typescript
 async updateQuantity({ params, request, auth, response }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -216,6 +223,7 @@ async updateQuantity({ params, request, auth, response }: HttpContext) {
 **Purpose**: Resync inventory variants based on existing card variants
 
 **Implementation**:
+
 ```typescript
 async resyncVariants({ params, auth, response, session }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -245,6 +253,7 @@ async resyncVariants({ params, auth, response, session }: HttpContext) {
 **Purpose**: Manually trigger price update for all inventory variants (JustTCG API request)
 
 **Implementation**:
+
 ```typescript
 async updatePrices({ auth, response, session }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -270,6 +279,7 @@ async updatePrices({ auth, response, session }: HttpContext) {
 **File**: `start/routes.ts`
 
 **Implementation**:
+
 ```typescript
 router
   .group(() => {
@@ -277,8 +287,14 @@ router
     router.get('/inventory/:inventoryItemId', '#controllers/inventory_controller.show')
     router.post('/inventory', '#controllers/inventory_controller.store')
     router.delete('/inventory/:inventoryItemId', '#controllers/inventory_controller.destroy')
-    router.patch('/inventory/variants/:inventoryItemVariantId/quantity', '#controllers/inventory_controller.updateQuantity')
-    router.post('/inventory/:inventoryItemId/resync', '#controllers/inventory_controller.resyncVariants')
+    router.patch(
+      '/inventory/variants/:inventoryItemVariantId/quantity',
+      '#controllers/inventory_controller.updateQuantity'
+    )
+    router.post(
+      '/inventory/:inventoryItemId/resync',
+      '#controllers/inventory_controller.resyncVariants'
+    )
     router.post('/inventory/update-prices', '#controllers/inventory_controller.updatePrices')
   })
   .use(middleware.auth())
@@ -322,4 +338,3 @@ await controller.store({
 - [ ] Update prices method implemented
 - [ ] All routes added
 - [ ] Controller tested
-

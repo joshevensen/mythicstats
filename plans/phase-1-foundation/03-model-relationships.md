@@ -1,6 +1,7 @@
 # Model Relationships
 
 ## Overview
+
 Set up all model relationships, hooks, and scopes to complete the ORM layer.
 
 ## Relationships to Configure
@@ -14,6 +15,7 @@ See [Data Models - Relationships](../../docs/04-data-models.md#relationships-sum
 **File**: `app/models/user.ts`
 
 **Add relationships**:
+
 ```typescript
 @hasMany(() => TrackedGame)
 declare trackedGames: HasMany<typeof TrackedGame>
@@ -32,6 +34,7 @@ declare inventoryItems: HasMany<typeof InventoryItem>
 **File**: `app/models/game.ts`
 
 **Add relationships**:
+
 ```typescript
 @hasMany(() => Set)
 declare sets: HasMany<typeof Set>
@@ -50,6 +53,7 @@ declare gameEvents: HasMany<typeof GameEvent>
 **File**: `app/models/set.ts`
 
 **Add relationships**:
+
 ```typescript
 @belongsTo(() => Game)
 declare game: BelongsTo<typeof Game>
@@ -68,6 +72,7 @@ declare trackedSets: HasMany<typeof TrackedSet>
 **File**: `app/models/card.ts`
 
 **Add relationships**:
+
 ```typescript
 @belongsTo(() => Set)
 declare set: BelongsTo<typeof Set>
@@ -86,6 +91,7 @@ declare inventoryItems: HasMany<typeof InventoryItem>
 **File**: `app/models/card_variant.ts`
 
 **Add relationships**:
+
 ```typescript
 @belongsTo(() => Card)
 declare card: BelongsTo<typeof Card>
@@ -101,6 +107,7 @@ declare inventoryItemVariants: HasMany<typeof InventoryItemVariant>
 **File**: `app/models/tracked_game.ts`
 
 **Add relationships**:
+
 ```typescript
 @belongsTo(() => User)
 declare user: BelongsTo<typeof User>
@@ -116,6 +123,7 @@ declare game: BelongsTo<typeof Game>
 **File**: `app/models/tracked_set.ts`
 
 **Add relationships**:
+
 ```typescript
 @belongsTo(() => User)
 declare user: BelongsTo<typeof User>
@@ -131,6 +139,7 @@ declare set: BelongsTo<typeof Set>
 **File**: `app/models/inventory_item.ts`
 
 **Add relationships**:
+
 ```typescript
 @belongsTo(() => User)
 declare user: BelongsTo<typeof User>
@@ -149,6 +158,7 @@ declare variants: HasMany<typeof InventoryItemVariant>
 **File**: `app/models/inventory_item_variant.ts`
 
 **Add relationships**:
+
 ```typescript
 @belongsTo(() => InventoryItem)
 declare inventoryItem: BelongsTo<typeof InventoryItem>
@@ -164,6 +174,7 @@ declare variant: BelongsTo<typeof CardVariant>
 **File**: `app/models/game_event.ts`
 
 **Add relationships**:
+
 ```typescript
 @belongsTo(() => Game)
 declare game: BelongsTo<typeof Game>
@@ -178,10 +189,12 @@ declare game: BelongsTo<typeof Game>
 **File**: `app/models/inventory_item.ts`
 
 **After Create Hook**:
+
 - Automatically create `inventory_item_variants` for all existing `card_variants`
 - Set initial quantity to 0
 
 **Before Delete Hook**:
+
 - Delete all associated `inventory_item_variants` first
 
 **Reference**: [Data Models - Model Hooks](../../docs/04-data-models.md#model-hooks)
@@ -193,10 +206,12 @@ declare game: BelongsTo<typeof Game>
 **File**: `app/models/inventory_item_variant.ts`
 
 **After Save Hook**:
+
 - Trigger price update if quantity > 0
 - Recalculate inventory item total value
 
 **Before Delete Hook**:
+
 - Recalculate inventory item total value
 
 ---
@@ -239,4 +254,3 @@ console.log(user.trackedGames)
 - [ ] Relationships tested in REPL
 - [ ] No TypeScript errors
 - [ ] Eager loading works correctly
-

@@ -1,6 +1,7 @@
 # Deployment
 
 ## Overview
+
 Deploy the application to production environment with Redis, database, and job workers.
 
 ## Step-by-Step Plan
@@ -8,6 +9,7 @@ Deploy the application to production environment with Redis, database, and job w
 ### 1. Set Up Production Environment
 
 **Requirements**:
+
 - [ ] Production server/hosting
 - [ ] PostgreSQL database
 - [ ] Redis instance
@@ -20,6 +22,7 @@ Deploy the application to production environment with Redis, database, and job w
 **File**: Production `.env` file
 
 **Variables to Set**:
+
 - `NODE_ENV=production`
 - Database connection (production)
 - `JUSTTCG_API_KEY` (production key)
@@ -27,6 +30,7 @@ Deploy the application to production environment with Redis, database, and job w
 - `APP_KEY` (production key)
 
 **Security**:
+
 - Use secure secret management
 - Never commit `.env` file
 - Use environment-specific configs
@@ -36,6 +40,7 @@ Deploy the application to production environment with Redis, database, and job w
 ### 3. Set Up Production Database
 
 **Steps**:
+
 1. Create production database
 2. Run migrations: `node ace migration:run`
 3. Create initial user (via seeder or manual)
@@ -46,10 +51,12 @@ Deploy the application to production environment with Redis, database, and job w
 ### 4. Set Up Redis Instance
 
 **Options**:
+
 - Managed Redis service (Redis Cloud, AWS ElastiCache)
 - Self-hosted Redis
 
 **Configuration**:
+
 - Set `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD` in production `.env`
 - Test connection
 - Monitor memory usage
@@ -59,6 +66,7 @@ Deploy the application to production environment with Redis, database, and job w
 ### 5. Deploy Application
 
 **Steps**:
+
 1. Build application: `npm run build` (if needed)
 2. Deploy code to server
 3. Install dependencies: `npm install --production`
@@ -66,6 +74,7 @@ Deploy the application to production environment with Redis, database, and job w
 5. Start application server
 
 **Process Manager** (PM2 example):
+
 ```bash
 pm2 start bin/server.js --name mythicstats
 pm2 save
@@ -77,11 +86,13 @@ pm2 startup
 ### 6. Start Job Workers
 
 **Steps**:
+
 1. Start BullMQ worker: `node ace bullmq:worker`
 2. Use process manager to keep worker running
 3. Monitor worker health
 
 **PM2 Example**:
+
 ```bash
 pm2 start "node ace bullmq:worker" --name mythicstats-worker
 pm2 save
@@ -92,6 +103,7 @@ pm2 save
 ### 7. Verify Jobs Are Running
 
 **Checks**:
+
 - [ ] Jobs registered in queue
 - [ ] Workers processing jobs
 - [ ] Jobs executing at scheduled times
@@ -99,6 +111,7 @@ pm2 save
 - [ ] Rate limits working correctly
 
 **Monitoring**:
+
 - Check BullMQ queue stats
 - Monitor application logs
 - Check job execution times
@@ -108,6 +121,7 @@ pm2 save
 ### 8. Set Up Monitoring/Alerting
 
 **Options**:
+
 - Application logs
 - Error tracking (Sentry, etc.)
 - Uptime monitoring
@@ -118,6 +132,7 @@ pm2 save
 ### 9. Set Up Backups
 
 **Backup**:
+
 - Database backups (regular)
 - Redis data (if needed)
 - Environment variables (secure storage)
@@ -127,6 +142,7 @@ pm2 save
 ### 10. Verify Application
 
 **Checks**:
+
 - [ ] Application accessible
 - [ ] All pages load
 - [ ] API calls work
@@ -148,4 +164,3 @@ pm2 save
 - [ ] Monitoring set up
 - [ ] Backups configured
 - [ ] Application verified working
-

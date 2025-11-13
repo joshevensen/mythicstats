@@ -28,5 +28,3 @@ export class DiscoverSetsProcessor extends BaseProcessor {
     }
   }
 }
-
-

@@ -42,7 +42,11 @@ export default class TrackedSet extends BaseModel {
 
   static needsSync = scope((query) => {
     query.where('is_active', true).where((q) => {
-      q.whereNull('last_sync_at').orWhere('last_sync_at', '<', DateTime.now().minus({ days: 1 }).toSQL())
+      q.whereNull('last_sync_at').orWhere(
+        'last_sync_at',
+        '<',
+        DateTime.now().minus({ days: 1 }).toSQL()
+      )
     })
   })
 

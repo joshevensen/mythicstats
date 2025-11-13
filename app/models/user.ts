@@ -72,8 +72,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   // Methods
   canMakeApiRequest(count: number = 1): boolean {
     return (
-      (this.apiRequestsRemaining ?? 0) >= count &&
-      (this.apiDailyRequestsRemaining ?? 0) >= count
+      (this.apiRequestsRemaining ?? 0) >= count && (this.apiDailyRequestsRemaining ?? 0) >= count
     )
   }
 

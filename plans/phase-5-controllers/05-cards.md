@@ -1,6 +1,7 @@
 # Cards Controller
 
 ## Overview
+
 Create the cards controller for viewing cards in sets and card details.
 
 ## Step-by-Step Plan
@@ -10,6 +11,7 @@ Create the cards controller for viewing cards in sets and card details.
 **File**: `app/controllers/cards_controller.ts`
 
 **Command**:
+
 ```bash
 node ace make:controller Cards
 ```
@@ -25,6 +27,7 @@ node ace make:controller Cards
 **Purpose**: List all cards in a set
 
 **Implementation**:
+
 ```typescript
 import type { HttpContext } from '@adonisjs/core/http'
 import Set from '#models/set'
@@ -46,8 +49,7 @@ export default class CardsController {
     const search = request.input('search')
     if (search) {
       query = query.where((q) => {
-        q.where('name', 'ilike', `%${search}%`)
-          .orWhere('number', 'ilike', `%${search}%`)
+        q.where('name', 'ilike', `%${search}%`).orWhere('number', 'ilike', `%${search}%`)
       })
     }
 
@@ -87,6 +89,7 @@ export default class CardsController {
 **Purpose**: Show detailed card information with variants and pricing
 
 **Implementation**:
+
 ```typescript
 async show({ params, auth, view }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -123,6 +126,7 @@ async show({ params, auth, view }: HttpContext) {
 **Purpose**: Manually update card data
 
 **Implementation**:
+
 ```typescript
 import CardService from '#services/CardService'
 
@@ -150,6 +154,7 @@ async update({ params, request, response, session }: HttpContext) {
 **Purpose**: Manually update variant data
 
 **Implementation**:
+
 ```typescript
 async updateVariant({ params, request, response, session }: HttpContext) {
   const data = request.only(['price', 'condition', 'printing', 'language'])
@@ -169,6 +174,7 @@ async updateVariant({ params, request, response, session }: HttpContext) {
 **File**: `start/routes.ts`
 
 **Implementation**:
+
 ```typescript
 router
   .group(() => {
@@ -211,4 +217,3 @@ await controller.show({ ...mockCtx, params: { cardId: '1' } })
 - [ ] Search/filter implemented
 - [ ] All routes added
 - [ ] Controller tested
-

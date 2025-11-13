@@ -32,14 +32,19 @@ export default class InventoryItemVariant extends BaseModel {
   @belongsTo(() => InventoryItem)
   declare inventoryItem: BelongsTo<typeof InventoryItem>
 
-  @belongsTo(() => CardVariant)
+  @belongsTo(() => CardVariant, { foreignKey: 'variantId' })
   declare variant: BelongsTo<typeof CardVariant>
 
   static needsPriceUpdate = scope((query) => {
-    query.where((q) => {
-      q.whereNull('last_price_update_at')
-        .orWhere('last_price_update_at', '<', DateTime.now().minus({ days: 1 }).toSQL())
-    }).where('quantity', '>', 0)
+    query
+      .where((q) => {
+        q.whereNull('last_price_update_at').orWhere(
+          'last_price_update_at',
+          '<',
+          DateTime.now().minus({ days: 1 }).toSQL()
+        )
+      })
+      .where('quantity', '>', 0)
   })
 
   static byInventoryItem = scope((query, inventoryItemId: number) => {
@@ -63,13 +68,13 @@ export default class InventoryItemVariant extends BaseModel {
   }
 
   async value(): Promise<number> {
-    await this.load('variant')
-    if (!this.variant) return 0
-    return this.quantity * this.variant.price
+    const relatedVariant = await CardVariant.find(this.variantId)
+    if (!relatedVariant) return 0
+    return this.quantity * relatedVariant.price
   }
 
   async variantPrice(): Promise<number | null> {
-    await this.load('variant')
-    return this.variant?.price ?? null
+    const relatedVariant = await CardVariant.find(this.variantId)
+    return relatedVariant?.price ?? null
   }
 }

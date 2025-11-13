@@ -1,6 +1,7 @@
 # Unit Tests
 
 ## Overview
+
 Create unit tests for models, services, and job processors.
 
 ## Step-by-Step Plan
@@ -20,6 +21,7 @@ Create unit tests for models, services, and job processors.
 **Files**: `tests/unit/models/`
 
 **Models to Test**:
+
 - User model rate limit methods
 - TrackedGame needsDiscovery()
 - TrackedSet needsSync()
@@ -27,6 +29,7 @@ Create unit tests for models, services, and job processors.
 - InventoryItemVariant value()
 
 **Example**:
+
 ```typescript
 // tests/unit/models/user_test.ts
 import { test } from '@japa/runner'
@@ -64,6 +67,7 @@ test.group('User Model', () => {
 **Files**: `tests/unit/services/`
 
 **Services to Test**:
+
 - JustTCGService methods (with mocks)
 - TrackingService methods
 - InventoryService methods
@@ -71,6 +75,7 @@ test.group('User Model', () => {
 - ApiUsageService methods
 
 **Example**:
+
 ```typescript
 // tests/unit/services/tracking_service_test.ts
 import { test } from '@japa/runner'
@@ -100,6 +105,7 @@ test.group('TrackingService', () => {
 **Files**: `tests/unit/jobs/processors/`
 
 **Processors to Test**:
+
 - DiscoverSetsProcessor
 - SyncTrackedSetsProcessor
 - UpdateInventoryPricesProcessor
@@ -113,6 +119,7 @@ test.group('TrackingService', () => {
 **Files**: `tests/unit/services/just_tcg_service_test.ts`
 
 **Scenarios**:
+
 - Rate limit checking
 - Rate limit updates from API response
 - Rate limit error handling
@@ -140,4 +147,3 @@ node ace test
 - [ ] Rate limiting tests written
 - [ ] All tests passing
 - [ ] Test coverage acceptable
-

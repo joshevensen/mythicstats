@@ -1,6 +1,7 @@
 # Setup & Configuration
 
 ## Overview
+
 This document covers initial setup, configuration, authentication, and development workflow for the MythicStats application.
 
 ---
@@ -56,6 +57,7 @@ REDIS_PASSWORD=  # Optional, leave empty if no password
 ```
 
 **Note**: Generate `APP_KEY` using:
+
 ```bash
 node ace generate:key
 ```
@@ -73,6 +75,7 @@ node ace migration:rollback
 ### 4. Redis Setup
 
 #### Local Development
+
 ```bash
 # macOS (Homebrew)
 brew install redis
@@ -88,6 +91,7 @@ redis-cli ping
 ```
 
 #### Production
+
 - Use a managed Redis service (Redis Cloud, AWS ElastiCache, etc.)
 - Update `REDIS_HOST`, `REDIS_PORT`, and `REDIS_PASSWORD` in production environment
 
@@ -96,6 +100,7 @@ redis-cli ping
 Since this is a single-user internal tool, create the initial user:
 
 **Option 1: Using AdonisJS REPL**
+
 ```bash
 node ace repl
 
@@ -117,15 +122,18 @@ console.log('User created:', user.id)
 ## Authentication
 
 ### Overview
+
 The application uses session-based authentication via AdonisJS Auth package.
 
 ### Configuration
+
 - **Config File**: `config/auth.ts`
 - **Guard**: `web` (session-based)
 - **User Model**: `app/models/user.ts`
 - **Session**: Cookie-based (configured in `config/session.ts`)
 
 ### Login Flow
+
 1. User visits protected route
 2. If not authenticated, redirected to `/login`
 3. After login, session created
@@ -148,11 +156,13 @@ router.get('/games', '#controllers/games_controller.index').use(middleware.auth(
 ### Creating Login/Register Pages
 
 Since this is a single-user internal tool, you may want to:
+
 - **Option A**: Create simple login page (no registration)
 - **Option B**: Skip auth for local development (remove auth middleware)
 - **Option C**: Use basic HTTP auth for simple protection
 
 **Simple Login Controller Example**:
+
 ```typescript
 // app/controllers/auth_controller.ts
 import type { HttpContext } from '@adonisjs/core/http'
@@ -164,7 +174,7 @@ export default class AuthController {
 
   async login({ request, auth, response }: HttpContext) {
     const { email, password } = request.only(['email', 'password'])
-    
+
     try {
       await auth.use('web').attempt(email, password)
       return response.redirect('/')
@@ -185,6 +195,7 @@ export default class AuthController {
 ## BullMQ Configuration
 
 ### Configuration File
+
 Create `config/bullmq.ts`:
 
 ```typescript
@@ -222,12 +233,14 @@ export default defineConfig({
 ### Starting Job Workers
 
 **Development**:
+
 ```bash
 # In a separate terminal
 node ace bullmq:listen mythicstats-jobs
 ```
 
 **Production**:
+
 - Use a process manager (PM2, systemd, etc.)
 - Run workers as background processes
 - Monitor worker health
@@ -301,6 +314,7 @@ mythicstats/
 ## Error Handling
 
 ### Global Exception Handler
+
 Located at `app/exceptions/handler.ts`
 
 ### Error Handling Strategy
@@ -321,6 +335,7 @@ Located at `app/exceptions/handler.ts`
    - Permanent failures: Log and mark job as failed
 
 ### Error Logging
+
 - Use AdonisJS Logger (`logger.error()`)
 - Log to console in development
 - Configure file/remote logging for production
@@ -337,46 +352,50 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
 // Apply auth middleware to all routes
-router.group(() => {
-  // Dashboard
-  router.get('/', '#controllers/dashboard_controller.index')
-  
-  // Games
-  router.get('/games', '#controllers/games_controller.index')
-  router.get('/games/:gameId', '#controllers/games_controller.show')
-  router.post('/games/:gameId/track', '#controllers/games_controller.track')
-  router.post('/games/:gameId/discover-sets', '#controllers/games_controller.discoverSets')
-  
-  // Sets
-  router.get('/sets/:setId', '#controllers/sets_controller.show')
-  router.post('/sets/:setId/track', '#controllers/sets_controller.track')
-  router.post('/sets/:setId/sync', '#controllers/sets_controller.sync')
-  
-  // Cards
-  router.get('/sets/:setId/cards', '#controllers/cards_controller.index')
-  router.get('/cards/:cardId', '#controllers/cards_controller.show')
-  
-  // Inventory
-  router.get('/inventory', '#controllers/inventory_controller.index')
-  router.get('/inventory/:inventoryItemId', '#controllers/inventory_controller.show')
-  router.post('/inventory', '#controllers/inventory_controller.store')
-  router.post('/inventory/update-prices', '#controllers/inventory_controller.updatePrices')
-  
-  // Game Events
-  router.get('/games/:gameId/events', '#controllers/game_events_controller.index')
-  router.get('/games/:gameId/events/create', '#controllers/game_events_controller.create')
-  router.get('/games/:gameId/events/:eventId', '#controllers/game_events_controller.edit')
-  router.post('/events', '#controllers/game_events_controller.store')
-  router.patch('/events/:eventId', '#controllers/game_events_controller.update')
-  router.delete('/events/:eventId', '#controllers/game_events_controller.destroy')
-}).use(middleware.auth())
+router
+  .group(() => {
+    // Dashboard
+    router.get('/', '#controllers/dashboard_controller.index')
+
+    // Games
+    router.get('/games', '#controllers/games_controller.index')
+    router.get('/games/:gameId', '#controllers/games_controller.show')
+    router.post('/games/:gameId/track', '#controllers/games_controller.track')
+    router.post('/games/:gameId/discover-sets', '#controllers/games_controller.discoverSets')
+
+    // Sets
+    router.get('/sets/:setId', '#controllers/sets_controller.show')
+    router.post('/sets/:setId/track', '#controllers/sets_controller.track')
+    router.post('/sets/:setId/sync', '#controllers/sets_controller.sync')
+
+    // Cards
+    router.get('/sets/:setId/cards', '#controllers/cards_controller.index')
+    router.get('/cards/:cardId', '#controllers/cards_controller.show')
+
+    // Inventory
+    router.get('/inventory', '#controllers/inventory_controller.index')
+    router.get('/inventory/:inventoryItemId', '#controllers/inventory_controller.show')
+    router.post('/inventory', '#controllers/inventory_controller.store')
+    router.post('/inventory/update-prices', '#controllers/inventory_controller.updatePrices')
+
+    // Game Events
+    router.get('/games/:gameId/events', '#controllers/game_events_controller.index')
+    router.get('/games/:gameId/events/create', '#controllers/game_events_controller.create')
+    router.get('/games/:gameId/events/:eventId', '#controllers/game_events_controller.edit')
+    router.post('/events', '#controllers/game_events_controller.store')
+    router.patch('/events/:eventId', '#controllers/game_events_controller.update')
+    router.delete('/events/:eventId', '#controllers/game_events_controller.destroy')
+  })
+  .use(middleware.auth())
 
 // Auth routes (if you add login)
-router.group(() => {
-  router.get('/login', '#controllers/auth_controller.showLogin')
-  router.post('/login', '#controllers/auth_controller.login')
-  router.post('/logout', '#controllers/auth_controller.logout')
-}).use(middleware.guest())
+router
+  .group(() => {
+    router.get('/login', '#controllers/auth_controller.showLogin')
+    router.post('/login', '#controllers/auth_controller.login')
+    router.post('/logout', '#controllers/auth_controller.logout')
+  })
+  .use(middleware.guest())
 ```
 
 ---
@@ -384,21 +403,25 @@ router.group(() => {
 ## Production Deployment
 
 ### Environment Variables
+
 - Set all environment variables in production environment
 - Use secure secret management (AWS Secrets Manager, etc.)
 - Never commit `.env` file
 
 ### Database
+
 - Run migrations: `node ace migration:run`
 - Backup database regularly
 - Monitor database performance
 
 ### Redis
+
 - Use managed Redis service
 - Configure connection pooling
 - Monitor memory usage
 
 ### Application
+
 - Use process manager (PM2, systemd)
 - Run multiple workers for job processing
 - Set up health checks
@@ -406,6 +429,7 @@ router.group(() => {
 - Set up monitoring/alerting
 
 ### BullMQ Workers
+
 - Run workers as separate processes
 - Use process manager to restart on failure
 - Monitor job queue size
@@ -418,21 +442,25 @@ router.group(() => {
 ### Common Issues
 
 **Redis Connection Errors**:
+
 - Verify Redis is running: `redis-cli ping`
 - Check `REDIS_HOST` and `REDIS_PORT` in `.env`
 - Check firewall rules
 
 **Database Connection Errors**:
+
 - Verify PostgreSQL is running
 - Check database credentials in `.env`
 - Ensure database exists: `createdb mythicstats`
 
 **JustTCG API Errors**:
+
 - Verify `JUSTTCG_API_KEY` is set correctly
 - Check API rate limits in user table
 - Review API response in logs
 
 **Job Not Running**:
+
 - Verify worker is running: `node ace bullmq:listen`
 - Check Redis connection
 - Review job queue in Redis: `redis-cli KEYS bull:*`
@@ -445,4 +473,3 @@ router.group(() => {
 2. Create initial user
 3. Follow [Implementation Plans](../plans/README.md) for development
 4. Reference other documentation as needed during implementation
-

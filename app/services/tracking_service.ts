@@ -17,7 +17,10 @@ export default class TrackingService {
    */
   async trackGame(userId: number, gameId: number) {
     await Game.findOrFail(gameId)
-    const existing = await TrackedGame.query().where('user_id', userId).where('game_id', gameId).first()
+    const existing = await TrackedGame.query()
+      .where('user_id', userId)
+      .where('game_id', gameId)
+      .first()
     if (existing) return existing
     return await TrackedGame.create({ userId, gameId, isActive: true })
   }
@@ -26,7 +29,10 @@ export default class TrackingService {
    * Untrack a game for a user (no-op if not tracked).
    */
   async untrackGame(userId: number, gameId: number): Promise<boolean> {
-    const existing = await TrackedGame.query().where('user_id', userId).where('game_id', gameId).first()
+    const existing = await TrackedGame.query()
+      .where('user_id', userId)
+      .where('game_id', gameId)
+      .first()
     if (!existing) return false
     await existing.delete()
     return true
@@ -36,7 +42,10 @@ export default class TrackingService {
    * Toggle active status of a tracked game.
    */
   async toggleGameTracking(userId: number, gameId: number) {
-    const tracked = await TrackedGame.query().where('user_id', userId).where('game_id', gameId).first()
+    const tracked = await TrackedGame.query()
+      .where('user_id', userId)
+      .where('game_id', gameId)
+      .first()
     if (!tracked) return await TrackedGame.create({ userId, gameId, isActive: true })
     tracked.isActive = !tracked.isActive
     await tracked.save()
@@ -48,7 +57,10 @@ export default class TrackingService {
    */
   async trackSet(userId: number, setId: number) {
     await Set.findOrFail(setId)
-    const existing = await TrackedSet.query().where('user_id', userId).where('set_id', setId).first()
+    const existing = await TrackedSet.query()
+      .where('user_id', userId)
+      .where('set_id', setId)
+      .first()
     if (existing) return existing
     return await TrackedSet.create({ userId, setId, isActive: true })
   }
@@ -57,7 +69,10 @@ export default class TrackingService {
    * Untrack a set for a user (no-op if not tracked).
    */
   async untrackSet(userId: number, setId: number): Promise<boolean> {
-    const existing = await TrackedSet.query().where('user_id', userId).where('set_id', setId).first()
+    const existing = await TrackedSet.query()
+      .where('user_id', userId)
+      .where('set_id', setId)
+      .first()
     if (!existing) return false
     await existing.delete()
     return true

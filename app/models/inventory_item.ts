@@ -1,5 +1,13 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, hasMany, scope, afterCreate, beforeDelete } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  column,
+  belongsTo,
+  hasMany,
+  scope,
+  afterCreate,
+  beforeDelete,
+} from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import User from './user.js'
 import Card from './card.js'
@@ -46,7 +54,7 @@ export default class InventoryItem extends BaseModel {
   static async createVariantsForAllCardVariants(item: InventoryItem) {
     // Get all card variants for this card
     const cardVariants = await CardVariant.query().where('card_id', item.cardId)
-    
+
     // Create inventory item variants for each card variant (quantity 0)
     for (const variant of cardVariants) {
       await InventoryItemVariant.create({
@@ -63,12 +71,14 @@ export default class InventoryItem extends BaseModel {
   }
 
   async totalQuantity(): Promise<number> {
-    const variants = await this.related('variants').query()
+    const variants = await InventoryItemVariant.query().where('inventory_item_id', this.id)
     return variants.reduce((sum, variant) => sum + variant.quantity, 0)
   }
 
   async totalValue(): Promise<number> {
-    const variants = await this.related('variants').query().preload('variant')
+    const variants = await InventoryItemVariant.query()
+      .where('inventory_item_id', this.id)
+      .preload('variant')
     let total = 0
     for (const invVariant of variants) {
       if (invVariant.variant) {
@@ -79,7 +89,10 @@ export default class InventoryItem extends BaseModel {
   }
 
   async hasVariant(variantId: number): Promise<boolean> {
-    const variant = await this.related('variants').query().where('variant_id', variantId).first()
+    const variant = await InventoryItemVariant.query()
+      .where('inventory_item_id', this.id)
+      .where('variant_id', variantId)
+      .first()
     return variant !== null
   }
 }

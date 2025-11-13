@@ -1,6 +1,7 @@
 # Game Events Controller
 
 ## Overview
+
 Create the game events controller for CRUD operations on game events.
 
 ## Step-by-Step Plan
@@ -10,6 +11,7 @@ Create the game events controller for CRUD operations on game events.
 **File**: `app/controllers/game_events_controller.ts`
 
 **Command**:
+
 ```bash
 node ace make:controller GameEvents
 ```
@@ -25,6 +27,7 @@ node ace make:controller GameEvents
 **Purpose**: List all events for a game
 
 **Implementation**:
+
 ```typescript
 import type { HttpContext } from '@adonisjs/core/http'
 import Game from '#models/game'
@@ -38,9 +41,7 @@ export default class GameEventsController {
     const game = await Game.findOrFail(params.gameId)
 
     // Get events for this game
-    const events = await GameEvent.query()
-      .where('game_id', game.id)
-      .orderBy('start_date', 'desc')
+    const events = await GameEvent.query().where('game_id', game.id).orderBy('start_date', 'desc')
 
     return view.render('pages/game_events/index', {
       game,
@@ -63,6 +64,7 @@ export default class GameEventsController {
 **Purpose**: Show create event form
 
 **Implementation**:
+
 ```typescript
 async create({ params, view }: HttpContext) {
   const game = await Game.findOrFail(params.gameId)
@@ -86,6 +88,7 @@ async create({ params, view }: HttpContext) {
 **Purpose**: Create new event
 
 **Implementation**:
+
 ```typescript
 async store({ request, response, session }: HttpContext) {
   const data = request.only([
@@ -116,6 +119,7 @@ async store({ request, response, session }: HttpContext) {
 **Purpose**: Show edit event form
 
 **Implementation**:
+
 ```typescript
 async edit({ params, view }: HttpContext) {
   const game = await Game.findOrFail(params.gameId)
@@ -141,6 +145,7 @@ async edit({ params, view }: HttpContext) {
 **Purpose**: Update event
 
 **Implementation**:
+
 ```typescript
 async update({ params, request, response, session }: HttpContext) {
   const event = await GameEvent.findOrFail(params.eventId)
@@ -173,6 +178,7 @@ async update({ params, request, response, session }: HttpContext) {
 **Purpose**: Delete event
 
 **Implementation**:
+
 ```typescript
 async destroy({ params, response, session }: HttpContext) {
   const event = await GameEvent.findOrFail(params.eventId)
@@ -192,6 +198,7 @@ async destroy({ params, response, session }: HttpContext) {
 **File**: `start/routes.ts`
 
 **Implementation**:
+
 ```typescript
 router
   .group(() => {
@@ -248,4 +255,3 @@ await controller.store({
 - [ ] Destroy method implemented
 - [ ] All routes added
 - [ ] Controller tested
-

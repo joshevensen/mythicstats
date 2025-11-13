@@ -7,13 +7,26 @@ import TrackedSet from '#models/tracked_set'
 import TrackingService from '#services/tracking_service'
 import JustTCGService from '#services/just_tcg_service'
 
+function serializeTrackedSet(trackedSet: TrackedSet | null) {
+  if (!trackedSet) return null
+  return {
+    id: trackedSet.id,
+    isActive: trackedSet.isActive,
+    lastSyncAt: trackedSet.lastSyncAt?.toISO() ?? null,
+    createdAt: trackedSet.createdAt.toISO(),
+  }
+}
+
 export default class SetsController {
-  async show({ params, auth, view }: HttpContext) {
+  async show({ params, auth, inertia }: HttpContext) {
     const user = await auth.getUserOrFail()
     const set = await Set.findOrFail(params.setId)
     await set.load('game')
 
-    const trackedSet = await TrackedSet.query().where('user_id', user.id).where('set_id', set.id).first()
+    const trackedSet = await TrackedSet.query()
+      .where('user_id', user.id)
+      .where('set_id', set.id)
+      .first()
 
     const totalCardsRow = await Card.query().where('set_id', set.id).count('* as total')
     const totalCards = Number((totalCardsRow[0] as any).total ?? 0)
@@ -33,9 +46,21 @@ export default class SetsController {
     const minPrice = Number((minPriceRow[0] as any).min_price ?? 0)
     const maxPrice = Number((maxPriceRow[0] as any).max_price ?? 0)
 
-    return view.render('pages/sets/show', {
-      set,
-      trackedSet,
+    return inertia.render('Sets/Show', {
+      set: {
+        id: set.id,
+        name: set.name,
+        slug: set.slug,
+        releaseDate: set.releaseDate?.toISODate() ?? null,
+        cardsCount: set.cardsCount,
+        game: set.game
+          ? {
+              id: set.game.id,
+              name: set.game.name,
+            }
+          : null,
+      },
+      trackedSet: serializeTrackedSet(trackedSet ?? null),
       cardSummary: {
         total: totalCards,
         inInventory: cardsInInventory,
@@ -81,5 +106,3 @@ export default class SetsController {
     return response.redirect().back()
   }
 }
-
-

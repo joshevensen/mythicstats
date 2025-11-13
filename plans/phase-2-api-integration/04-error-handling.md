@@ -1,6 +1,7 @@
 # Error Handling
 
 ## Overview
+
 Implement comprehensive error handling for API calls, network errors, and invalid responses.
 
 ## Step-by-Step Plan
@@ -12,6 +13,7 @@ Implement comprehensive error handling for API calls, network errors, and invali
 **Purpose**: Define custom error types for better error handling
 
 **Implementation**:
+
 ```typescript
 export class RateLimitError extends Error {
   constructor(
@@ -36,7 +38,10 @@ export class ApiError extends Error {
 }
 
 export class NetworkError extends Error {
-  constructor(message: string, public originalError?: Error) {
+  constructor(
+    message: string,
+    public originalError?: Error
+  ) {
     super(message)
     this.name = 'NetworkError'
   }
@@ -52,6 +57,7 @@ export class NetworkError extends Error {
 **Purpose**: Wrap SDK calls with error handling
 
 **Implementation**:
+
 ```typescript
 private async handleSdkCall<T>(
   apiCall: () => Promise<JustTCGApiResponse<T>>
@@ -91,12 +97,13 @@ private async handleSdkCall<T>(
 **Purpose**: Handle rate limit errors specifically
 
 **Implementation**:
+
 ```typescript
 private async handleApiError(response: JustTCGApiResponse<any>): Promise<void> {
   if (response.error?.code === 429) {
     // Rate limit exceeded
     const resetTime = this.calculateResetTime()
-    
+
     throw new RateLimitError(
       'Rate limit exceeded. Please try again later.',
       resetTime,
@@ -124,6 +131,7 @@ private async handleApiError(response: JustTCGApiResponse<any>): Promise<void> {
 **Purpose**: Retry network errors with exponential backoff
 
 **Implementation**:
+
 ```typescript
 private async retryWithBackoff<T>(
   apiCall: () => Promise<T>,
@@ -150,7 +158,7 @@ private async retryWithBackoff<T>(
 
       // Calculate delay (exponential backoff)
       const delay = initialDelay * Math.pow(2, attempt)
-      
+
       // Wait before retry
       await new Promise(resolve => setTimeout(resolve, delay))
     }
@@ -161,6 +169,7 @@ private async retryWithBackoff<T>(
 ```
 
 **Usage**:
+
 ```typescript
 async getGames(): Promise<JustTCGApiResponse<Game[]>> {
   return this.retryWithBackoff(async () => {
@@ -178,6 +187,7 @@ async getGames(): Promise<JustTCGApiResponse<Game[]>> {
 **Purpose**: Validate response structure before processing
 
 **Implementation**:
+
 ```typescript
 private validateResponse<T>(response: JustTCGApiResponse<T>): void {
   if (!response) {
@@ -204,6 +214,7 @@ private validateResponse<T>(response: JustTCGApiResponse<T>): void {
 **Purpose**: Log errors for debugging
 
 **Implementation**:
+
 ```typescript
 import logger from '@adonisjs/core/services/logger'
 
@@ -218,6 +229,7 @@ private logError(error: Error, context: Record<string, any> = {}): void {
 ```
 
 **Usage**:
+
 ```typescript
 catch (error) {
   this.logError(error, { method: 'getGames', userId: this.user.id })
@@ -234,6 +246,7 @@ catch (error) {
 **Action**: Wrap all API methods with error handling
 
 **Pattern**:
+
 ```typescript
 async someApiMethod(...args): Promise<...> {
   try {
@@ -281,7 +294,7 @@ try {
   // Set user to rate limited state
   user.apiRequestsRemaining = 0
   await user.save()
-  
+
   await service.getGames()
 } catch (error) {
   console.log('Error type:', error.constructor.name)
@@ -305,4 +318,3 @@ try {
 - [ ] All methods wrapped with error handling
 - [ ] Errors tested (rate limit, network, invalid response)
 - [ ] Error messages are user-friendly
-

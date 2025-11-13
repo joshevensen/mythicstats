@@ -1,6 +1,7 @@
 # Phase 4: Data Synchronization
 
 ## Overview
+
 Implement data synchronization logic for games, sets, cards, and price updates.
 
 ## Steps
@@ -29,4 +30,3 @@ Implement data synchronization logic for games, sets, cards, and price updates.
 - [ ] Incremental updates implemented
 - [ ] Price updates working
 - [ ] All sync logic tested
-

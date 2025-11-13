@@ -1,14 +1,17 @@
 # Pages & Views
 
 ## Overview
+
 Simple CRUD-style pages for internal tool use. Focus on functionality over fancy UI.
 
 ## Page Structure
 
 ### 1. Dashboard (`/`)
+
 **Purpose**: Overview of inventory, API status, and recent activity
 
 **Content**:
+
 - Inventory summary
   - Total cards in inventory
   - Total inventory value
@@ -31,14 +34,17 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
 ---
 
 ### 2. Games (`/games`)
+
 **Purpose**: List all available games
 
 **Content**:
+
 - List of all available games (from JustTCG)
 - Indicates which games are tracked
 - Shows last sets discovery time for tracked games
 
 **Actions**:
+
 - Track game (add to tracked_games)
 - Untrack game (remove from tracked_games)
 - Toggle active status
@@ -47,9 +53,11 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
 ---
 
 ### 3. Game Details (`/games/:gameId`)
+
 **Purpose**: View game information and manage sets
 
 **Content**:
+
 - Game information (at top)
   - Name, card count, sets count
   - Last updated
@@ -61,6 +69,7 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
   - Shows last sync time for tracked sets
 
 **Actions**:
+
 - Track/untrack game
 - Toggle game active status
 - **Discover sets** (manual JustTCG API request - fetches available sets for this game)
@@ -72,9 +81,11 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
 ---
 
 ### 4. Game Events (`/games/:gameId/events`)
+
 **Purpose**: List game events
 
 **Content**:
+
 - Game information (at top, same as game details page)
 - List of game events
   - Event type, title, dates
@@ -82,6 +93,7 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
   - Active/upcoming/past status
 
 **Actions**:
+
 - Create event (link to create page)
 - Edit event (link to edit page)
 - Delete event
@@ -90,9 +102,11 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
 ---
 
 ### 4a. Create Game Event (`/games/:gameId/events/create`)
+
 **Purpose**: Create a new game event
 
 **Content**:
+
 - Game information (at top)
 - Event creation form
   - Event type (dropdown)
@@ -103,15 +117,18 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
   - Affects pricing (checkbox)
 
 **Actions**:
+
 - Submit form (create event)
 - Cancel (return to events list)
 
 ---
 
 ### 4b. Edit Game Event (`/games/:gameId/events/:eventId`)
+
 **Purpose**: View and edit a game event
 
 **Content**:
+
 - Game information (at top)
 - Event information display
 - Event edit form (pre-filled)
@@ -123,6 +140,7 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
   - Affects pricing (checkbox)
 
 **Actions**:
+
 - Submit form (update event)
 - Delete event
 - Cancel (return to events list)
@@ -130,9 +148,11 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
 ---
 
 ### 5. Set Details (`/sets/:setId`)
+
 **Purpose**: View set information and card summary
 
 **Content**:
+
 - Set information
   - Name, release date, card count
   - Game information
@@ -149,6 +169,7 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
   - View all cards (link to cards page)
 
 **Actions**:
+
 - Track/untrack set
 - Toggle active status
 - **Manual sync** (manual JustTCG API request - syncs card data for this set)
@@ -157,16 +178,19 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
 ---
 
 ### 6. Cards (`/sets/:setId/cards`)
+
 **Purpose**: View cards in a set
 
 **Note**: This is a list view. For set information and card summary, see Set Details page.
 
 **Content**:
+
 - List of cards in the set
 - Card details (name, number, rarity)
 - Link to card details page
 
 **Actions**:
+
 - Search/filter cards
 - View card details
 - Add card to inventory (link to inventory)
@@ -174,9 +198,11 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
 ---
 
 ### 7. Card Details (`/cards/:cardId`)
+
 **Purpose**: View detailed card information
 
 **Content**:
+
 - Card information (name, number, rarity, details)
 - All variants with pricing
   - Condition, printing, language
@@ -188,14 +214,17 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
   - Quantities
 
 **Actions**:
+
 - Add to inventory
 
 ---
 
 ### 8. Inventory (`/inventory`)
+
 **Purpose**: Manage card inventory
 
 **Content**:
+
 - List of cards in inventory
   - Card name, set
   - Total quantity across all variants
@@ -208,6 +237,7 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
   - Value (quantity × price)
 
 **Actions**:
+
 - Remove card from inventory
 - Update variant quantity
 - **Update prices** (manual JustTCG API request - updates prices for all inventory variants)
@@ -216,9 +246,11 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
 ---
 
 ### 9. Inventory Item Details (`/inventory/:inventoryItemId`)
+
 **Purpose**: Detailed view of a single inventory item
 
 **Content**:
+
 - Card information
 - All variants with quantities
 - Price information per variant
@@ -226,6 +258,7 @@ Simple CRUD-style pages for internal tool use. Focus on functionality over fancy
 - Notes (card-level and variant-level)
 
 **Actions**:
+
 - Update variant quantities
 - Update notes
 - Remove from inventory
@@ -252,22 +285,26 @@ Dashboard (/) - Includes API status
 ## Common UI Patterns
 
 ### Lists
+
 - Simple table format
 - Sortable columns
 - Basic filtering/search
 - Pagination if needed
 
 ### Forms
+
 - Standard form inputs
 - Validation feedback
 - Success/error messages
 
 ### Actions
+
 - Buttons for primary actions
 - Links for navigation
 - Confirmation dialogs for destructive actions
 
 ### Status Indicators
+
 - Badges for status (tracked/untracked, active/inactive)
 - Color coding for rate limits (green/yellow/red)
 - Timestamps for last sync/update
@@ -277,11 +314,13 @@ Dashboard (/) - Includes API status
 ## Page-Specific Details
 
 ### Dashboard
+
 - **Layout**: Grid of summary cards + activity list
 - **Updates**: Real-time or refresh button
 - **Charts**: Simple line chart for price history (if needed)
 
 ### Games/Sets/Cards Lists
+
 - **Table columns**: Key fields only (minimal for sets list since there can be hundreds)
 - **Filters**: Search by name, filter by tracked status
 - **Actions**: Row-level action buttons
@@ -289,22 +328,26 @@ Dashboard (/) - Includes API status
 - **Game Details**: Game info section at top, sets list below
 
 ### Inventory
+
 - **Grouping**: By card, expandable to show variants
 - **Calculations**: Show totals (quantity, value) prominently
 - **Updates**: Inline quantity editing or modal
 
 ### Set Details
+
 - **Layout**: Set info section + card summary section
 - **Card summary**: Statistics about cards in the set (total, synced, in inventory, price range)
 - **Quick actions**: Prominent buttons for track/untrack, sync
 
 ### Game Events
+
 - **Calendar view**: Optional (simple list is fine)
 - **Filtering**: By type, date range
 - **Status**: Color-coded (active/upcoming/past)
 - **Forms**: Separate pages for create/edit (no modals)
 
 ### Manual JustTCG API Requests
+
 - **Game Details**: "Discover Sets" button - manually triggers sets discovery for the game
 - **Set Details**: "Sync Set" button - manually triggers card data sync for the set
 - **Inventory**: "Update Prices" button - manually triggers price updates for all inventory variants
@@ -329,4 +372,3 @@ Dashboard (/) - Includes API status
 - Inventory value trends
 - Export inventory to CSV
 - Bulk operations (bulk add to inventory, bulk update quantities)
-

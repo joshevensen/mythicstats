@@ -29,5 +29,3 @@ process.on('SIGTERM', async () => {
   await worker.close()
   process.exit(0)
 })
-
-

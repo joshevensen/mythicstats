@@ -1,6 +1,7 @@
 # BullMQ Setup
 
 ## Overview
+
 Install BullMQ packages, configure Redis connection, and set up the job queue infrastructure.
 
 ## Step-by-Step Plan
@@ -8,12 +9,14 @@ Install BullMQ packages, configure Redis connection, and set up the job queue in
 ### 1. Install BullMQ Packages
 
 **Commands**:
+
 ```bash
 npm install bullmq ioredis
 npm install --save-dev @types/ioredis
 ```
 
 **Verify Installation**:
+
 ```bash
 npm list bullmq ioredis
 ```
@@ -23,12 +26,14 @@ npm list bullmq ioredis
 ### 2. Verify Redis is Running
 
 **Check Redis Connection**:
+
 ```bash
 redis-cli ping
 # Should return: PONG
 ```
 
 **If Redis is not running**:
+
 ```bash
 # macOS (Homebrew)
 brew services start redis
@@ -46,6 +51,7 @@ sudo systemctl start redis
 **File**: `.env`
 
 **Add**:
+
 ```env
 REDIS_HOST=localhost
 REDIS_PORT=6379
@@ -55,6 +61,7 @@ REDIS_PASSWORD=  # Optional, leave empty if no password
 **Update**: `start/env.ts` to validate Redis environment variables
 
 **Add to env.ts**:
+
 ```typescript
 REDIS_HOST: Env.schema.string({ format: 'host' }),
 REDIS_PORT: Env.schema.number(),
@@ -68,6 +75,7 @@ REDIS_PASSWORD: Env.schema.string.optional(),
 **File**: `config/bullmq.ts`
 
 **Implementation**:
+
 ```typescript
 import env from '#start/env'
 import { defineConfig } from '@adonisjs/bullmq'
@@ -111,6 +119,7 @@ export default defineConfig({
 **Purpose**: Centralized queue management
 
 **Implementation**:
+
 ```typescript
 import { Queue } from 'bullmq'
 import bullmqConfig from '#config/bullmq'
@@ -150,6 +159,7 @@ export default class QueueService {
 **Purpose**: Initialize queue service on app boot
 
 **Implementation**:
+
 ```typescript
 import { ApplicationContract } from '@adonisjs/core/types'
 import QueueService from '#services/QueueService'
@@ -207,4 +217,3 @@ await queueService.close()
 - [ ] Queue can be instantiated
 - [ ] Test job can be added to queue
 - [ ] Queue connection verified
-

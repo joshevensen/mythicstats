@@ -1,6 +1,7 @@
 # Dashboard Controller
 
 ## Overview
+
 Create the dashboard controller that displays inventory summary, API status, and recent activity.
 
 ## Step-by-Step Plan
@@ -10,6 +11,7 @@ Create the dashboard controller that displays inventory summary, API status, and
 **File**: `app/controllers/dashboard_controller.ts`
 
 **Command**:
+
 ```bash
 node ace make:controller Dashboard
 ```
@@ -25,6 +27,7 @@ node ace make:controller Dashboard
 **Purpose**: Display dashboard with inventory summary, API status, and recent activity
 
 **Implementation**:
+
 ```typescript
 import type { HttpContext } from '@adonisjs/core/http'
 import InventoryItem from '#models/inventory_item'
@@ -100,13 +103,12 @@ export default class DashboardController {
 **File**: `start/routes.ts`
 
 **Implementation**:
+
 ```typescript
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
-router
-  .get('/', '#controllers/dashboard_controller.index')
-  .use(middleware.auth())
+router.get('/', '#controllers/dashboard_controller.index').use(middleware.auth())
 ```
 
 ---
@@ -118,6 +120,7 @@ router
 **Purpose**: Display dashboard content
 
 **Structure**:
+
 - Inventory summary cards (total cards, quantity, value)
 - API status section (plan, usage, remaining)
 - Recent activity list (syncs, price updates)
@@ -162,4 +165,3 @@ await controller.index(ctx)
 - [ ] Recent activity queried
 - [ ] Route added
 - [ ] Controller tested
-

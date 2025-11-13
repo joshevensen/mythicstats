@@ -1,6 +1,7 @@
 # Phase 8: Documentation & Deployment
 
 ## Overview
+
 Finalize documentation and deploy the application to production.
 
 ## Steps
@@ -25,4 +26,3 @@ Finalize documentation and deploy the application to production.
 - [ ] Jobs running in production
 - [ ] Monitoring set up
 - [ ] Application verified working
-

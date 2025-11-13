@@ -6,8 +6,18 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.bigIncrements('id')
-      table.bigInteger('inventory_item_id').unsigned().references('id').inTable('inventory_items').onDelete('CASCADE')
-      table.bigInteger('variant_id').unsigned().references('id').inTable('card_variants').onDelete('CASCADE')
+      table
+        .bigInteger('inventory_item_id')
+        .unsigned()
+        .references('id')
+        .inTable('inventory_items')
+        .onDelete('CASCADE')
+      table
+        .bigInteger('variant_id')
+        .unsigned()
+        .references('id')
+        .inTable('card_variants')
+        .onDelete('CASCADE')
       table.integer('quantity').defaultTo(0)
       table.text('notes').nullable()
       table.timestamp('last_price_update_at', { useTz: true }).nullable()

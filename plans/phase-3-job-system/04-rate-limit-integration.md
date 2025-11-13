@@ -1,6 +1,7 @@
 # Rate Limit Integration
 
 ## Overview
+
 Integrate rate limit checking and updates into all job processors to ensure jobs respect API limits and reschedule when needed.
 
 ## Step-by-Step Plan
@@ -12,6 +13,7 @@ Integrate rate limit checking and updates into all job processors to ensure jobs
 **Purpose**: Add comprehensive rate limit checking and rescheduling logic
 
 **Implementation**:
+
 ```typescript
 protected async checkAndHandleRateLimit(job: Job, requiredRequests: number = 1): Promise<boolean> {
   // Refresh user from database to get latest rate limit info
@@ -63,6 +65,7 @@ protected calculateResetTime(): DateTime {
 **Update**: `process()` method to check rate limits before handling
 
 **Implementation**:
+
 ```typescript
 async process(job: Job): Promise<void> {
   try {
@@ -100,6 +103,7 @@ async process(job: Job): Promise<void> {
 **Purpose**: Ensure rate limit info is updated after every API response
 
 **Implementation**:
+
 ```typescript
 protected async makeApiCall<T>(
   apiCall: () => Promise<JustTCGApiResponse<T>>
@@ -139,6 +143,7 @@ protected async makeApiCall<T>(
 **Action**: Use rate limit checking before each game
 
 **Implementation**:
+
 ```typescript
 protected async handle(job: Job): Promise<void> {
   const trackedGames = await TrackedGame.query()
@@ -153,7 +158,7 @@ protected async handle(job: Job): Promise<void> {
     }
 
     // Fetch sets
-    await this.makeApiCall(() => 
+    await this.makeApiCall(() =>
       this.justTcgService.getSets(trackedGame.gameId, trackedGame)
     )
 
@@ -175,6 +180,7 @@ protected async handle(job: Job): Promise<void> {
 **Action**: Check rate limits before each set, handle pagination rate limits
 
 **Implementation**:
+
 ```typescript
 protected async handle(job: Job): Promise<void> {
   const trackedSets = await TrackedSet.query()
@@ -211,6 +217,7 @@ protected async handle(job: Job): Promise<void> {
 **Action**: Check rate limits before each batch
 
 **Implementation**:
+
 ```typescript
 protected async handle(job: Job): Promise<void> {
   const variants = await InventoryItemVariant.query()
@@ -262,6 +269,7 @@ protected async handle(job: Job): Promise<void> {
 **Purpose**: Log when jobs are rescheduled due to rate limits
 
 **Implementation**:
+
 ```typescript
 import logger from '@adonisjs/core/services/logger'
 
@@ -275,7 +283,7 @@ protected async checkAndHandleRateLimit(job: Job, requiredRequests: number = 1):
 
     if (delayMs > 0) {
       await job.moveToDelayed(delayMs)
-      
+
       logger.info('Job rescheduled due to rate limit', {
         jobId: job.id,
         jobName: job.name,
@@ -283,7 +291,7 @@ protected async checkAndHandleRateLimit(job: Job, requiredRequests: number = 1):
         dailyRemaining: this.user.apiDailyRequestsRemaining,
         monthlyRemaining: this.user.apiRequestsRemaining,
       })
-      
+
       return false
     }
   }
@@ -335,4 +343,3 @@ await processor.process(mockJob)
 - [ ] Rate limit logging implemented
 - [ ] Reset time calculation working
 - [ ] Rate limit integration tested
-

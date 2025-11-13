@@ -1,6 +1,7 @@
 # Card Sync
 
 ## Overview
+
 Implement logic to sync card data for tracked sets, including pagination handling and variant storage.
 
 ## Step-by-Step Plan
@@ -8,6 +9,7 @@ Implement logic to sync card data for tracked sets, including pagination handlin
 ### 1. Review Card Sync Requirements
 
 **Key Points**:
+
 - Sync cards for tracked sets only
 - Use pagination to fetch all cards
 - Store cards and variants in database
@@ -24,13 +26,14 @@ Implement logic to sync card data for tracked sets, including pagination handlin
 **Method**: `syncCardsForTrackedSets(userId)`
 
 **Implementation**:
+
 ```typescript
 async syncCardsForTrackedSets(userId: number): Promise<void> {
   const User = await import('#models/user')
   const user = await User.default.findOrFail(userId)
-  
+
   const justTcgService = new JustTCGService(user)
-  
+
   // Get all active tracked sets
   const trackedSets = await TrackedSet.query()
     .where('user_id', userId)
@@ -46,7 +49,7 @@ async syncCardsForTrackedSets(userId: number): Promise<void> {
 
     // Sync cards (getCardsBySet handles pagination)
     await justTcgService.getCardsBySet(trackedSet.setId, trackedSet)
-    
+
     // Mark synced (done by getCardsBySet if trackedSet provided)
   }
 }
@@ -61,6 +64,7 @@ async syncCardsForTrackedSets(userId: number): Promise<void> {
 **Ensure**: `getCardsBySet()` handles pagination correctly
 
 **Check**:
+
 - Starts with `offset=0`
 - Uses correct `limit` (20 or 100 based on plan)
 - Increments `offset` by batch size
@@ -78,6 +82,7 @@ async syncCardsForTrackedSets(userId: number): Promise<void> {
 **Ensure**: All variant fields are mapped correctly
 
 **Check**:
+
 - Basic fields (condition, printing, language, price)
 - All statistics fields (7d, 30d, 90d, 1y, all-time)
 - Price history JSONB fields
@@ -98,6 +103,7 @@ async syncCardsForTrackedSets(userId: number): Promise<void> {
 ### 6. Handle Sync Edge Cases
 
 **Scenarios**:
+
 - Set has no cards (empty response)
 - Set not found in JustTCG
 - Partial sync (some cards fail)
@@ -105,6 +111,7 @@ async syncCardsForTrackedSets(userId: number): Promise<void> {
 - Large sets (1000+ cards)
 
 **Handling**:
+
 - Empty response: Mark as synced anyway
 - Not found: Log error, don't mark as synced
 - Partial sync: Continue with remaining cards
@@ -127,7 +134,8 @@ const user = await User.default.first()
 const trackingService = new TrackingService.default()
 
 // Get a tracked set
-const trackedSet = await TrackedSet.default.query()
+const trackedSet = await TrackedSet.default
+  .query()
   .where('user_id', user.id)
   .where('is_active', true)
   .first()
@@ -140,8 +148,7 @@ if (trackedSet) {
 
   // Verify cards were created
   const Card = await import('#models/card')
-  const cards = await Card.default.query()
-    .where('set_id', trackedSet.setId)
+  const cards = await Card.default.query().where('set_id', trackedSet.setId)
   console.log('Cards synced:', cards.length)
 }
 ```
@@ -158,4 +165,3 @@ if (trackedSet) {
 - [ ] Handles edge cases
 - [ ] Works with SyncTrackedSetsProcessor
 - [ ] Card sync tested with real API
-

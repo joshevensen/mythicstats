@@ -1,6 +1,7 @@
 # Incremental Updates
 
 ## Overview
+
 Implement incremental sync logic to only fetch new/updated data based on last sync timestamps.
 
 ## Step-by-Step Plan
@@ -8,6 +9,7 @@ Implement incremental sync logic to only fetch new/updated data based on last sy
 ### 1. Review Last Sync Tracking
 
 **Tables**:
+
 - `tracked_games.last_sets_discovery_at` - When sets were last discovered
 - `tracked_sets.last_sync_at` - When cards were last synced
 
@@ -22,6 +24,7 @@ Implement incremental sync logic to only fetch new/updated data based on last sy
 **Method**: `needsDiscovery()`
 
 **Implementation**:
+
 ```typescript
 needsDiscovery(): boolean {
   // If never discovered, needs discovery
@@ -46,6 +49,7 @@ needsDiscovery(): boolean {
 **Method**: `needsSync()`
 
 **Implementation**:
+
 ```typescript
 needsSync(): boolean {
   // If never synced, needs sync
@@ -90,6 +94,7 @@ needsSync(): boolean {
 **Note**: JustTCG API includes `last_updated` timestamps on games, sets, and cards
 
 **Implementation**:
+
 ```typescript
 // In JustTCGService.getSets()
 // Compare JustTCG last_updated with database last_updated_at
@@ -123,10 +128,11 @@ await Set.updateOrCreate(
 **Method**: `syncSet(setId, force = false)`
 
 **Implementation**:
+
 ```typescript
 async syncSet(setId: string, force: boolean = false): Promise<void> {
   const trackedSet = await TrackedSet.findByOrFail('set_id', setId)
-  
+
   // Check if sync needed (unless forced)
   if (!force && !trackedSet.needsSync()) {
     return // No sync needed
@@ -176,4 +182,3 @@ console.log('Needs sync after update:', trackedSet.needsSync())
 - [ ] Force sync option available
 - [ ] Incremental updates working correctly
 - [ ] Timestamps updated correctly
-

@@ -1,6 +1,7 @@
 # Lucid Models
 
 ## Overview
+
 Create all Lucid ORM models with proper types, relationships, and methods.
 
 ## Models to Create
@@ -23,12 +24,14 @@ Create all Lucid ORM models with proper types, relationships, and methods.
 **File**: `app/models/user.ts` (already exists, extend it)
 
 **Add fields**:
+
 - `apiPlan`, `apiMonthlyLimit`, `apiDailyLimit`, `apiRateLimit`
 - `apiRequestsUsed`, `apiDailyRequestsUsed`
 - `apiRequestsRemaining`, `apiDailyRequestsRemaining`
 - `apiLimitInfoUpdatedAt`
 
 **Add methods**:
+
 - `canMakeApiRequest()` - Check if requests remaining > 0
 - `updateRateLimitInfo(usage)` - Update from SDK response
 - `hasExtraRequests()` - Check if near end of month with extra requests
@@ -36,6 +39,7 @@ Create all Lucid ORM models with proper types, relationships, and methods.
 **Reference**: [Data Models - User](../../docs/04-data-models.md#user-model)
 
 **Commands**:
+
 ```bash
 # Model already exists, just edit it
 # No command needed
@@ -50,17 +54,20 @@ Create all Lucid ORM models with proper types, relationships, and methods.
 **Fields**: All columns from games table
 
 **Relationships**:
+
 - `hasMany Set`
 - `hasMany TrackedGame`
 - `hasMany GameEvent`
 
 **Methods**:
+
 - `findByJustTcgId(justTcgId)`
 - `findOrCreateByJustTcgId(justTcgData)`
 
 **Reference**: [Data Models - Game](../../docs/04-data-models.md#game-model)
 
 **Command**:
+
 ```bash
 node ace make:model Game
 ```
@@ -74,17 +81,20 @@ node ace make:model Game
 **Fields**: All columns from sets table
 
 **Relationships**:
+
 - `belongsTo Game`
 - `hasMany Card`
 - `hasMany TrackedSet`
 
 **Methods**:
+
 - `findByJustTcgId(justTcgId)`
 - `findOrCreateByJustTcgId(justTcgData, gameId)`
 
 **Reference**: [Data Models - Set](../../docs/04-data-models.md#set-model)
 
 **Command**:
+
 ```bash
 node ace make:model Set
 ```
@@ -98,17 +108,20 @@ node ace make:model Set
 **Fields**: All columns from cards table
 
 **Relationships**:
+
 - `belongsTo Set`
 - `hasMany CardVariant`
 - `hasMany InventoryItem`
 
 **Methods**:
+
 - `findByJustTcgId(justTcgId)`
 - `findOrCreateByJustTcgId(justTcgData, setId)`
 
 **Reference**: [Data Models - Card](../../docs/04-data-models.md#card-model)
 
 **Command**:
+
 ```bash
 node ace make:model Card
 ```
@@ -122,10 +135,12 @@ node ace make:model Card
 **Fields**: All columns from card_variants table (many fields!)
 
 **Relationships**:
+
 - `belongsTo Card`
 - `hasMany InventoryItemVariant`
 
 **Methods**:
+
 - `findByJustTcgId(justTcgId)`
 - `findOrCreateByJustTcgId(justTcgData, cardId)`
 - `getPriceHistory(period)` - Access price history JSONB
@@ -134,6 +149,7 @@ node ace make:model Card
 **Reference**: [Data Models - CardVariant](../../docs/04-data-models.md#cardvariant-model)
 
 **Command**:
+
 ```bash
 node ace make:model CardVariant
 ```
@@ -147,16 +163,19 @@ node ace make:model CardVariant
 **Fields**: All columns from tracked_games table
 
 **Relationships**:
+
 - `belongsTo User`
 - `belongsTo Game`
 
 **Methods**:
+
 - `needsDiscovery()` - Check if discovery needed
 - `markDiscoveryComplete()` - Update timestamp
 
 **Reference**: [Data Models - TrackedGame](../../docs/04-data-models.md#trackedgame-model)
 
 **Command**:
+
 ```bash
 node ace make:model TrackedGame
 ```
@@ -170,16 +189,19 @@ node ace make:model TrackedGame
 **Fields**: All columns from tracked_sets table
 
 **Relationships**:
+
 - `belongsTo User`
 - `belongsTo Set`
 
 **Methods**:
+
 - `needsSync()` - Check if sync needed
 - `markSynced()` - Update timestamp
 
 **Reference**: [Data Models - TrackedSet](../../docs/04-data-models.md#trackedset-model)
 
 **Command**:
+
 ```bash
 node ace make:model TrackedSet
 ```
@@ -193,11 +215,13 @@ node ace make:model TrackedSet
 **Fields**: All columns from inventory_items table
 
 **Relationships**:
+
 - `belongsTo User`
 - `belongsTo Card`
 - `hasMany InventoryItemVariant`
 
 **Methods**:
+
 - `getTotalQuantity()` - Sum of all variant quantities
 - `getTotalValue()` - Calculate total value
 - `recalculateValue()` - Update cached value
@@ -205,6 +229,7 @@ node ace make:model TrackedSet
 **Reference**: [Data Models - InventoryItem](../../docs/04-data-models.md#inventoryitem-model)
 
 **Command**:
+
 ```bash
 node ace make:model InventoryItem
 ```
@@ -218,16 +243,19 @@ node ace make:model InventoryItem
 **Fields**: All columns from inventory_item_variants table
 
 **Relationships**:
+
 - `belongsTo InventoryItem`
 - `belongsTo CardVariant`
 
 **Methods**:
+
 - `getValue()` - quantity × variant.price
 - `updatePrice()` - Trigger price update
 
 **Reference**: [Data Models - InventoryItemVariant](../../docs/04-data-models.md#inventoryitemvariant-model)
 
 **Command**:
+
 ```bash
 node ace make:model InventoryItemVariant
 ```
@@ -241,9 +269,11 @@ node ace make:model InventoryItemVariant
 **Fields**: All columns from game_events table
 
 **Relationships**:
+
 - `belongsTo Game`
 
 **Methods**:
+
 - `isActive()` - Check if event is currently active
 - `isUpcoming()` - Check if event is in the future
 - `isPast()` - Check if event has ended
@@ -251,6 +281,7 @@ node ace make:model InventoryItemVariant
 **Reference**: [Data Models - GameEvent](../../docs/04-data-models.md#gameevent-model)
 
 **Command**:
+
 ```bash
 node ace make:model GameEvent
 ```
@@ -270,4 +301,3 @@ Add validation rules to each model as specified in [Data Models](../../docs/04-d
 - [ ] Validation rules added
 - [ ] Models compile without errors
 - [ ] Can create instances in REPL/test
-

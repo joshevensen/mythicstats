@@ -1,6 +1,7 @@
 # Rate Limiting Logic
 
 ## Overview
+
 Implement comprehensive rate limiting logic that checks limits before API calls and updates rate limit information after every response.
 
 ## Step-by-Step Plan
@@ -14,6 +15,7 @@ Implement comprehensive rate limiting logic that checks limits before API calls 
 **Enhancement**: Add detailed checks and error messages
 
 **Implementation**:
+
 ```typescript
 async checkRateLimit(count: number = 1): Promise<{ canMake: boolean; reason?: string }> {
   // Check monthly limit
@@ -50,6 +52,7 @@ async checkRateLimit(count: number = 1): Promise<{ canMake: boolean; reason?: st
 **Purpose**: Extract and update rate limit info from SDK response `usage` object
 
 **SDK Response Structure**:
+
 ```typescript
 {
   data: [...],
@@ -67,6 +70,7 @@ async checkRateLimit(count: number = 1): Promise<{ canMake: boolean; reason?: st
 ```
 
 **Implementation**:
+
 ```typescript
 async updateRateLimitInfo(response: JustTCGApiResponse<any>): Promise<void> {
   if (!response.usage) {
@@ -101,6 +105,7 @@ async updateRateLimitInfo(response: JustTCGApiResponse<any>): Promise<void> {
 **Action**: Update all API methods to use enhanced rate limit checking
 
 **Pattern**:
+
 ```typescript
 async someApiMethod(...args): Promise<...> {
   // Check rate limit
@@ -120,6 +125,7 @@ async someApiMethod(...args): Promise<...> {
 ```
 
 **Methods to Update**:
+
 - `getGames()`
 - `getSets()`
 - `getCardsBySet()` (check before each page)
@@ -136,6 +142,7 @@ async someApiMethod(...args): Promise<...> {
 **Purpose**: Handle 429 (rate limit) errors returned by API
 
 **SDK Error Structure**:
+
 ```typescript
 {
   error: {
@@ -147,6 +154,7 @@ async someApiMethod(...args): Promise<...> {
 ```
 
 **Implementation**:
+
 ```typescript
 async handleApiError(response: JustTCGApiResponse<any>): Promise<void> {
   if (response.error && response.error.code === 429) {
@@ -177,6 +185,7 @@ async handleApiError(response: JustTCGApiResponse<any>): Promise<void> {
 **Purpose**: Calculate when rate limits reset
 
 **Implementation**:
+
 ```typescript
 calculateResetTime(): DateTime {
   // Daily reset: midnight UTC
@@ -203,6 +212,7 @@ calculateResetTime(): DateTime {
 **Purpose**: Get current rate limit status (for UI display)
 
 **Implementation**:
+
 ```typescript
 getRateLimitStatus(): {
   plan: string | null
@@ -284,4 +294,3 @@ try {
 - [ ] Rate limit status method implemented
 - [ ] Rate limiting tested with real API calls
 - [ ] Rate limit info persists correctly to database
-

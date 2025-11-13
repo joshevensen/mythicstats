@@ -59,11 +59,20 @@ export default class Set extends BaseModel {
     },
     gameId: number
   ) {
+    const normalized = {
+      gameId,
+      justTcgSetId: data.justTcgSetId,
+      name: data.name,
+      slug: data.slug ?? null,
+      releaseDate: data.releaseDate ? DateTime.fromISO(data.releaseDate) : null,
+      cardsCount: data.cardsCount ?? null,
+    }
+
     let set = await this.findBy('just_tcg_set_id', data.justTcgSetId)
     if (!set) {
-      set = await this.create({ ...data, gameId })
+      set = await this.create(normalized)
     } else {
-      set.merge({ ...data, gameId })
+      set.merge(normalized)
       await set.save()
     }
     return set

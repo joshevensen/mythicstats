@@ -1,6 +1,7 @@
 # API Methods
 
 ## Overview
+
 Implement all API wrapper methods in JustTCGService. These methods wrap the SDK and automatically persist data to the database.
 
 ## Step-by-Step Plan
@@ -14,6 +15,7 @@ Implement all API wrapper methods in JustTCGService. These methods wrap the SDK 
 **SDK Method**: `client.v1.games.list()`
 
 **Implementation**:
+
 ```typescript
 async getGames(): Promise<JustTCGApiResponse<Game[]>> {
   // Check rate limit
@@ -58,10 +60,12 @@ async getGames(): Promise<JustTCGApiResponse<Game[]>> {
 **SDK Method**: `client.v1.sets.list({ game: gameId })`
 
 **Parameters**:
+
 - `gameId`: Database game ID (string)
 - `trackedGame`: Optional TrackedGame instance
 
 **Implementation**:
+
 ```typescript
 async getSets(gameId: string, trackedGame?: TrackedGame): Promise<JustTCGApiResponse<Set[]>> {
   // Check rate limit
@@ -114,20 +118,22 @@ async getSets(gameId: string, trackedGame?: TrackedGame): Promise<JustTCGApiResp
 **SDK Method**: `client.v1.cards.get({ set: setId, limit, offset })`
 
 **Key Features**:
+
 - Handles pagination automatically
 - Batch size: 20 (free) or 100 (paid) based on user plan
 - Updates rate limit info after each page
 - Upserts cards and variants
 
 **Implementation**:
+
 ```typescript
 async getCardsBySet(setId: string, trackedSet?: TrackedSet): Promise<JustTCGApiResponse<Card[]>> {
   // Get set to find JustTCG ID
   const set = await Set.findOrFail(setId)
-  
+
   // Determine batch size based on plan
   const batchSize = this.user.apiPlan === 'Free Tier' ? 20 : 100
-  
+
   let offset = 0
   let allCards: Card[] = []
   let hasMore = true
@@ -230,16 +236,18 @@ async getCardsBySet(setId: string, trackedSet?: TrackedSet): Promise<JustTCGApiR
 **SDK Method**: `client.v1.cards.get()` with array of IDs (POST request)
 
 **Key Features**:
+
 - Handles batching (20 for free, 100 for paid)
 - Splits large arrays into batches
 - Updates rate limit after each batch
 
 **Implementation**:
+
 ```typescript
 async getCardsBatch(justTcgIds: string[]): Promise<JustTCGApiResponse<Card[]>> {
   // Determine batch size
   const batchSize = this.user.apiPlan === 'Free Tier' ? 20 : 100
-  
+
   let allCards: Card[] = []
 
   // Process in batches
@@ -322,4 +330,3 @@ console.log('Sets:', setsResponse.data.length)
 - [ ] Pagination working correctly
 - [ ] Batching working correctly
 - [ ] Methods tested with real API calls
-

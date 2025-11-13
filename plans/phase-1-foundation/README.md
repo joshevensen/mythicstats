@@ -1,6 +1,7 @@
 # Phase 1: Foundation & Database Setup
 
 ## Overview
+
 This phase establishes the database schema and data models that form the foundation of the application.
 
 ## Steps
@@ -29,4 +30,3 @@ This phase establishes the database schema and data models that form the foundat
 - [ ] Validation rules added
 - [ ] Model hooks implemented
 - [ ] Migrations run successfully
-

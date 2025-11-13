@@ -67,7 +67,9 @@ plans/
 ## Phase Overview
 
 ### Phase 0: Setup & Configuration
+
 **Priority**: Must have (first)
+
 - Prerequisites & dependencies
 - Environment variables
 - Database setup
@@ -78,53 +80,69 @@ plans/
 - Development workflow
 
 ### Phase 1: Foundation & Database Setup
+
 **Priority**: Must have
+
 - Database migrations
 - Lucid models
 - Model relationships
 
 ### Phase 2: JustTCG API Integration
+
 **Priority**: Must have
+
 - API service setup
 - API methods
 - Rate limiting logic
 - Error handling
 
 ### Phase 3: BullMQ Job System
+
 **Priority**: Must have
+
 - BullMQ setup
 - Job processors
 - Job scheduling
 - Rate limit integration
 
 ### Phase 4: Data Synchronization
+
 **Priority**: Must have
+
 - Sets discovery
 - Card sync
 - Incremental updates
 - Price updates
 
 ### Phase 5: Controllers & Routes
+
 **Priority**: Should have
+
 - Dashboard
 - Games, Sets, Cards
 - Game Events
 - Inventory
 
 ### Phase 6: User Interface
+
 **Priority**: Nice to have
+
 - View templates
 - Forms & actions
 - UI components
 
 ### Phase 7: Testing & Refinement
+
 **Priority**: Should have
+
 - Unit tests
 - Integration tests
 - Manual testing
 
 ### Phase 8: Documentation & Deployment
+
 **Priority**: Nice to have
+
 - Documentation
 - Deployment
 
@@ -139,6 +157,7 @@ plans/
 ## Dependencies
 
 See [Setup & Configuration](../docs/02-setup-configuration.md) for:
+
 - Prerequisites
 - Environment variables
 - Initial setup steps
@@ -151,4 +170,3 @@ See [Setup & Configuration](../docs/02-setup-configuration.md) for:
 - [Pages & Views](../docs/09-pages-views.md) - For UI specifications
 - [JustTCG API Integration](../docs/06-just-tcg-api-integration.md) - For API details
 - [BullMQ Job System](../docs/07-bullmq-job-system.md) - For job system details
-

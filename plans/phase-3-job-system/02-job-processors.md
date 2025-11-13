@@ -1,6 +1,7 @@
 # Job Processors
 
 ## Overview
+
 Create job processors for all background jobs: discover-sets, sync-tracked-sets, and update-inventory-prices.
 
 ## Step-by-Step Plan
@@ -10,6 +11,7 @@ Create job processors for all background jobs: discover-sets, sync-tracked-sets,
 **Directory**: `app/jobs/processors/`
 
 **Command**:
+
 ```bash
 mkdir -p app/jobs/processors
 ```
@@ -23,6 +25,7 @@ mkdir -p app/jobs/processors
 **Purpose**: Shared logic for all processors (rate limit checking, error handling)
 
 **Implementation**:
+
 ```typescript
 import type { Job } from 'bullmq'
 import User from '#models/user'
@@ -92,6 +95,7 @@ export abstract class BaseProcessor {
 **Job Name**: `discover-sets`
 
 **Implementation**:
+
 ```typescript
 import { BaseProcessor } from './base_processor.js'
 import type { Job } from 'bullmq'
@@ -146,6 +150,7 @@ export class DiscoverSetsProcessor extends BaseProcessor {
 **Job Name**: `sync-tracked-sets`
 
 **Implementation**:
+
 ```typescript
 import { BaseProcessor } from './base_processor.js'
 import type { Job } from 'bullmq'
@@ -192,6 +197,7 @@ export class SyncTrackedSetsProcessor extends BaseProcessor {
 **Job Name**: `update-inventory-prices`
 
 **Implementation**:
+
 ```typescript
 import { BaseProcessor } from './base_processor.js'
 import type { Job } from 'bullmq'
@@ -254,6 +260,7 @@ export class UpdateInventoryPricesProcessor extends BaseProcessor {
 **Purpose**: Create processor instances based on job name
 
 **Implementation**:
+
 ```typescript
 import User from '#models/user'
 import { DiscoverSetsProcessor } from './discover_sets_processor.js'
@@ -317,4 +324,3 @@ await processor.process(mockJob)
 - [ ] Error handling implemented
 - [ ] Job progress tracking implemented
 - [ ] Processors tested
-

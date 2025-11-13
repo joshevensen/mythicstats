@@ -104,20 +104,20 @@ export default class Card extends BaseModel {
   }
 
   async variantsForCondition(condition: string, printing?: string) {
-    const query = this.related('variants').query().where('condition', condition)
+    let query = CardVariant.query().where('card_id', this.id).where('condition', condition)
     if (printing) {
-      query.where('printing', printing)
+      query = query.where('printing', printing)
     }
     return await query
   }
 
   async latestPrice(condition?: string, printing?: string) {
-    const query = this.related('variants').query().orderBy('last_updated', 'desc')
+    let query = CardVariant.query().where('card_id', this.id).orderBy('last_updated', 'desc')
     if (condition) {
-      query.where('condition', condition)
+      query = query.where('condition', condition)
     }
     if (printing) {
-      query.where('printing', printing)
+      query = query.where('printing', printing)
     }
     return await query.first()
   }

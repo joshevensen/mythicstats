@@ -1,6 +1,7 @@
 # Phase 7: Testing & Refinement
 
 ## Overview
+
 Create tests and perform manual testing to ensure application quality.
 
 ## Steps
@@ -25,4 +26,3 @@ Create tests and perform manual testing to ensure application quality.
 - [ ] Manual testing completed
 - [ ] All bugs fixed
 - [ ] Application ready for deployment
-

@@ -1,11 +1,13 @@
 # BullMQ Job System Architecture
 
 ## Overview
+
 Use BullMQ for managing background jobs to sync data from JustTCG API and update prices.
 
 ## Queue Configuration
 
 ### Queue Setup
+
 - **Queue Name**: `mythicstats-jobs`
 - **Redis Connection**: Use Redis for BullMQ (separate from session storage if needed)
 - **Concurrency**: Configurable per job type
@@ -13,11 +15,13 @@ Use BullMQ for managing background jobs to sync data from JustTCG API and update
 ## Job Types
 
 ### 1. `discover-sets`
+
 **Purpose**: Discover available sets for tracked games
 
 **Frequency**: Weekly (or on-demand)
 
 **Process**:
+
 1. Check rate limit status
 2. If rate limited, reschedule for after limit expires
 3. For each active tracked game:
@@ -32,11 +36,13 @@ Use BullMQ for managing background jobs to sync data from JustTCG API and update
 ---
 
 ### 2. `sync-tracked-sets`
+
 **Purpose**: Sync card data for tracked sets
 
 **Frequency**: Weekly
 
 **Process**:
+
 1. Check rate limit status
 2. If rate limited, reschedule for after limit expires
 3. For each active tracked set:
@@ -57,11 +63,13 @@ Use BullMQ for managing background jobs to sync data from JustTCG API and update
 ---
 
 ### 3. `update-inventory-prices`
+
 **Purpose**: Update prices for cards in inventory
 
 **Frequency**: Hourly
 
 **Process**:
+
 1. Check rate limit status
 2. If rate limited, reschedule for after limit expires
 3. Query `inventory_item_variants` where:
@@ -80,6 +88,7 @@ Use BullMQ for managing background jobs to sync data from JustTCG API and update
 ## Job Scheduling
 
 ### Recurring Jobs
+
 Use BullMQ's repeatable jobs feature:
 
 ```typescript
@@ -92,6 +101,7 @@ Use BullMQ's repeatable jobs feature:
 ```
 
 ### Job Priorities
+
 1. `update-inventory-prices` - High (user's inventory)
 2. `sync-tracked-sets` - Medium (background sync)
 3. `discover-sets` - Low (discovery only, not critical)
@@ -101,7 +111,9 @@ Use BullMQ's repeatable jobs feature:
 ## Rate Limit Integration
 
 ### Before Job Execution
+
 Every job that makes API calls should:
+
 1. Check `users.api_requests_remaining > 0` (monthly)
 2. Check `users.api_daily_requests_remaining > 0` (daily)
 3. If both are true: proceed with API call
@@ -111,7 +123,9 @@ Every job that makes API calls should:
    - Log that job was delayed
 
 ### After API Response
+
 After every API response (from SDK):
+
 1. Extract `usage` object from SDK response (SDK transforms `_metadata` to `usage`)
 2. Update `users` table with current rate limit info from `usage`:
    - `api_plan`, limits, usage, remaining
@@ -119,7 +133,9 @@ After every API response (from SDK):
 3. This keeps rate limit info current
 
 ### After Rate Limit Hit (429 Error)
+
 When SDK returns rate limit error (in `response.error` and `response.code`):
+
 1. Rate limit info should already be in `usage` object (if available)
 2. Update `users` table with latest info from `usage` object
 3. Calculate reset time (daily = midnight UTC, monthly = based on plan)
@@ -129,9 +145,11 @@ When SDK returns rate limit error (in `response.error` and `response.code`):
 ## Job Processors
 
 ### Location
+
 `app/jobs/processors/`
 
 ### Structure
+
 ```typescript
 // app/jobs/processors/SyncTrackedGamesProcessor.ts
 export class SyncTrackedGamesProcessor {
@@ -144,6 +162,7 @@ export class SyncTrackedGamesProcessor {
 ## Job Queue Setup
 
 ### Configuration File
+
 `config/bullmq.ts`
 
 ```typescript
@@ -170,11 +189,13 @@ export default {
 ## Job Management
 
 ### Starting Jobs
+
 - Jobs should be registered in `start/jobs.ts` or similar
 - Use AdonisJS providers to initialize BullMQ
 - Start repeatable jobs on application boot
 
 ### Monitoring
+
 - Use BullMQ dashboard (optional)
 - Log job execution to application logs
 - Track job success/failure rates
@@ -182,11 +203,13 @@ export default {
 ## Error Handling
 
 ### Job Failures
+
 - Retry with exponential backoff
 - After max retries, log error
 - Don't mark as failed for rate limit errors (reschedule instead)
 
 ### Rate Limit Errors
+
 - Don't count as job failure
 - Reschedule for after limit expires
 - Update `users` table with rate limit info from SDK response `usage` object
@@ -195,6 +218,7 @@ export default {
 ## Dependencies
 
 ### Required Packages
+
 ```json
 {
   "bullmq": "^latest",
@@ -203,13 +227,14 @@ export default {
 ```
 
 ### Redis Setup
+
 - Redis instance required for BullMQ
 - Can use same Redis as sessions or separate instance
 - Configure connection in environment variables
 
 ## Testing
+
 - Mock BullMQ for unit tests
 - Test job processors in isolation
 - Test rate limit integration
 - Test job scheduling and rescheduling
-

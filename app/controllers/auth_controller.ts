@@ -12,12 +12,12 @@ export default class AuthController {
 
   async login({ request, auth, response, session, logger }: HttpContext) {
     const { email, password } = request.only(['email', 'password'])
-    
+
     try {
       // Use verifyCredentials which is timing-attack safe
       // This method finds the user and verifies the password in one call
       const user = await User.verifyCredentials(email, password)
-      
+
       // Login user
       await auth.use('web').login(user)
       session.flash('success', 'Logged in successfully')
@@ -27,22 +27,22 @@ export default class AuthController {
       // which is automatically handled by the exception handler
       // but we can catch it here for custom handling
       if (error instanceof errors.E_INVALID_CREDENTIALS) {
-        logger.error('Login failed: Invalid credentials', { 
-          email, 
+        logger.error('Login failed: Invalid credentials', {
+          email,
           error: error.message,
-          stack: error.stack 
+          stack: error.stack,
         })
         session.flash('error', 'Invalid credentials')
         return response.redirect().back()
       }
-      
+
       // Log other errors
-      logger.error('Login failed: Unexpected error', { 
-        email, 
+      logger.error('Login failed: Unexpected error', {
+        email,
         error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined
+        stack: error instanceof Error ? error.stack : undefined,
       })
-      
+
       // Re-throw other errors
       throw error
     }

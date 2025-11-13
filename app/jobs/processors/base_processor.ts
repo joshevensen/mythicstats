@@ -14,7 +14,10 @@ export abstract class BaseProcessor {
     this.justTcgService = new JustTCGService(user)
   }
 
-  protected async checkAndHandleRateLimit(job: Job, requiredRequests: number = 1): Promise<boolean> {
+  protected async checkAndHandleRateLimit(
+    job: Job,
+    requiredRequests: number = 1
+  ): Promise<boolean> {
     await this.user.refresh()
     const canMake = this.user.canMakeApiRequest(requiredRequests)
     if (!canMake) {
@@ -59,5 +62,3 @@ export abstract class BaseProcessor {
 
   protected abstract handle(job: Job): Promise<void>
 }
-
-

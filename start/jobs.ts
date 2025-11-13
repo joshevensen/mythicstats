@@ -43,5 +43,3 @@ export async function registerJobs(): Promise<void> {
     }
   )
 }
-
-

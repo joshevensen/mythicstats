@@ -14,5 +14,3 @@ export default class BullmqWorker extends BaseCommand {
     await new Promise(() => {})
   }
 }
-
-

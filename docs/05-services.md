@@ -1,9 +1,11 @@
 # Services Architecture
 
 ## Overview
+
 Services provide reusable business logic that can be used by both background jobs and on-demand operations (controllers, user actions). This separation ensures code reuse and consistent behavior across the application.
 
 ## Service Principles
+
 - **Shared Logic**: Services contain business logic used by both jobs and controllers
 - **Stateless**: Services should be stateless (no instance state between calls)
 - **Error Handling**: Services handle errors and return consistent error types
@@ -17,19 +19,23 @@ Services provide reusable business logic that can be used by both background job
 Wrapper service around the official [JustTCG TypeScript SDK](https://justtcg.com/docs/sdk) (`justtcg-js`).
 
 ### Purpose
+
 Handles all interactions with the JustTCG API, including rate limit checking, response transformation, and **automatic database persistence**.
 
 ### Dependencies
+
 - `justtcg-js` SDK
 - `JUSTTCG_API_KEY` environment variable
 - Lucid models (Game, Set, Card, CardVariant, TrackedGame, TrackedSet)
 
 ### Key Behavior
+
 **JustTCGService automatically updates the database** when fetching data from the API. It upserts games, sets, cards, and variants, and optionally updates tracking timestamps.
 
 ### Methods
 
 #### `getGames()`
+
 - **Purpose**: Fetch all available games and persist to database
 - **SDK Method**: `client.v1.games.list()`
 - **Returns**: `JustTCGApiResponse<Game[]>` (with database records)
@@ -38,26 +44,28 @@ Handles all interactions with the JustTCG API, including rate limit checking, re
 - **Used By**: Jobs (initial setup), Controllers (game listing)
 
 #### `getSets(gameId: string, trackedGame?: TrackedGame)`
+
 - **Purpose**: Fetch all sets for a specific game and persist to database
 - **SDK Method**: `client.v1.sets.list({ game: gameId })`
 - **Parameters**:
   - `gameId`: Database game ID
   - `trackedGame`: Optional TrackedGame instance (to update `last_sets_discovery_at`)
 - **Returns**: `JustTCGApiResponse<Set[]>` (with database records)
-- **Database**: 
+- **Database**:
   - Upserts sets in `sets` table
   - Updates `tracked_games.last_sets_discovery_at` if `trackedGame` provided
 - **Rate Limit**: Updates user rate limit info from response `usage` object
 - **Used By**: Jobs (discover-sets), Controllers (set listing, on-demand discovery)
 
 #### `getCardsBySet(setId: string, trackedSet?: TrackedSet)`
+
 - **Purpose**: Fetch cards for a specific set with pagination and persist to database
 - **SDK Method**: `client.v1.cards.get({ set: setId, limit, offset })`
 - **Parameters**:
   - `setId`: Database set ID
   - `trackedSet`: Optional TrackedSet instance (to update `last_sync_at`)
 - **Returns**: `JustTCGApiResponse<Card[]>` (paginated, with database records)
-- **Database**: 
+- **Database**:
   - Upserts cards in `cards` table
   - Upserts variants in `card_variants` table
   - Updates `tracked_sets.last_sync_at` if `trackedSet` provided
@@ -67,12 +75,13 @@ Handles all interactions with the JustTCG API, including rate limit checking, re
 - **Used By**: Jobs (sync-tracked-sets), Controllers (on-demand set sync)
 
 #### `getCardsByGame(gameId: string)`
+
 - **Purpose**: Fetch cards for a specific game with pagination and persist to database
 - **SDK Method**: `client.v1.cards.get({ game: gameId, limit, offset })`
 - **Parameters**:
   - `gameId`: Database game ID
 - **Returns**: `JustTCGApiResponse<Card[]>` (paginated, with database records)
-- **Database**: 
+- **Database**:
   - Upserts cards in `cards` table
   - Upserts variants in `card_variants` table
 - **Pagination**: Handles pagination automatically
@@ -80,12 +89,13 @@ Handles all interactions with the JustTCG API, including rate limit checking, re
 - **Used By**: Controllers (bulk operations, when extra requests available)
 
 #### `getCardsBatch(justTcgIds: string[])`
+
 - **Purpose**: Batch fetch multiple cards by JustTCG IDs and persist to database
 - **SDK Method**: `client.v1.cards.get()` with array of IDs (POST request)
 - **Parameters**:
   - `justTcgIds`: Array of JustTCG card IDs or variant IDs
 - **Returns**: `JustTCGApiResponse<Card[]>` (with database records)
-- **Database**: 
+- **Database**:
   - Upserts cards in `cards` table
   - Upserts variants in `card_variants` table
 - **Batch Size**: Up to 20 cards (free plan) or 100 cards (paid plans) per request
@@ -93,13 +103,14 @@ Handles all interactions with the JustTCG API, including rate limit checking, re
 - **Used By**: Jobs (update-inventory-prices), Controllers (inventory price updates)
 
 #### `getCard(justTcgId: string, options?: CardOptions)`
+
 - **Purpose**: Fetch single card by JustTCG ID and persist to database (rare use only)
 - **SDK Method**: `client.v1.cards.get({ cardId: justTcgId })` or `{ variantId: justTcgId }`
 - **Parameters**:
   - `justTcgId`: JustTCG card ID or variant ID
   - `options`: Optional card options
 - **Returns**: `JustTCGApiResponse<Card>` (with database record)
-- **Database**: 
+- **Database**:
   - Upserts card in `cards` table
   - Upserts variants in `card_variants` table
 - **Rate Limit**: Updates user rate limit info from response `usage` object
@@ -107,6 +118,7 @@ Handles all interactions with the JustTCG API, including rate limit checking, re
 - **Note**: Prefer batch operations when possible
 
 #### `checkRateLimit(user: User)`
+
 - **Purpose**: Check if API can be accessed
 - **Parameters**:
   - `user`: User model instance
@@ -117,6 +129,7 @@ Handles all interactions with the JustTCG API, including rate limit checking, re
 - **Used By**: All service methods before making API calls
 
 #### `updateRateLimitInfo(user: User, response: JustTCGApiResponse<any>)`
+
 - **Purpose**: Update rate limit info from SDK response
 - **Parameters**:
   - `user`: User model instance
@@ -130,6 +143,7 @@ Handles all interactions with the JustTCG API, including rate limit checking, re
 - **Used By**: All service methods after making API calls
 
 ### Error Handling
+
 - SDK-level errors (authentication, invalid parameters): Thrown as exceptions
 - API-level errors (validation, rate limits): Returned in `response.error` and `response.code`
 - Rate limit errors (429): Returned in response object, not thrown
@@ -142,14 +156,17 @@ Handles all interactions with the JustTCG API, including rate limit checking, re
 Service for managing tracked games and sets.
 
 ### Purpose
+
 Handles business logic for tracking/untracking games and sets, including validation and state management.
 
 ### Dependencies
+
 - Lucid models (User, Game, Set, TrackedGame, TrackedSet)
 
 ### Methods
 
 #### `trackGame(userId: number, gameId: number)`
+
 - **Purpose**: Add a game to user's tracked games
 - **Parameters**:
   - `userId`: User ID
@@ -163,6 +180,7 @@ Handles business logic for tracking/untracking games and sets, including validat
 - **Used By**: Controllers (track game action)
 
 #### `untrackGame(userId: number, gameId: number)`
+
 - **Purpose**: Remove a game from user's tracked games
 - **Parameters**:
   - `userId`: User ID
@@ -175,6 +193,7 @@ Handles business logic for tracking/untracking games and sets, including validat
 - **Used By**: Controllers (untrack game action)
 
 #### `trackSet(userId: number, setId: number)`
+
 - **Purpose**: Add a set to user's tracked sets
 - **Parameters**:
   - `userId`: User ID
@@ -188,6 +207,7 @@ Handles business logic for tracking/untracking games and sets, including validat
 - **Used By**: Controllers (track set action)
 
 #### `untrackSet(userId: number, setId: number)`
+
 - **Purpose**: Remove a set from user's tracked sets
 - **Parameters**:
   - `userId`: User ID
@@ -200,6 +220,7 @@ Handles business logic for tracking/untracking games and sets, including validat
 - **Used By**: Controllers (untrack set action)
 
 #### `getTrackedGames(userId: number)`
+
 - **Purpose**: Get all tracked games for a user
 - **Parameters**:
   - `userId`: User ID
@@ -207,6 +228,7 @@ Handles business logic for tracking/untracking games and sets, including validat
 - **Used By**: Controllers (list tracked games)
 
 #### `getTrackedSets(userId: number)`
+
 - **Purpose**: Get all tracked sets for a user
 - **Parameters**:
   - `userId`: User ID
@@ -214,6 +236,7 @@ Handles business logic for tracking/untracking games and sets, including validat
 - **Used By**: Controllers (list tracked sets)
 
 #### `toggleGameTracking(userId: number, gameId: number)`
+
 - **Purpose**: Toggle active status of tracked game
 - **Parameters**:
   - `userId`: User ID
@@ -222,6 +245,7 @@ Handles business logic for tracking/untracking games and sets, including validat
 - **Used By**: Controllers (enable/disable game tracking)
 
 #### `toggleSetTracking(userId: number, setId: number)`
+
 - **Purpose**: Toggle active status of tracked set
 - **Parameters**:
   - `userId`: User ID
@@ -230,6 +254,7 @@ Handles business logic for tracking/untracking games and sets, including validat
 - **Used By**: Controllers (enable/disable set tracking)
 
 ### Error Handling
+
 - Validation errors: Thrown as exceptions (game/set doesn't exist, already tracked)
 - Database errors: Thrown as exceptions
 
@@ -240,14 +265,17 @@ Handles business logic for tracking/untracking games and sets, including validat
 Service for managing card inventory.
 
 ### Purpose
+
 Handles business logic for adding cards to inventory, updating variant quantities, and syncing inventory variants with card variants.
 
 ### Dependencies
+
 - Lucid models (User, Card, CardVariant, InventoryItem, InventoryItemVariant)
 
 ### Methods
 
 #### `addCardToInventory(userId: number, cardId: number)`
+
 - **Purpose**: Add a card to user's inventory
 - **Parameters**:
   - `userId`: User ID
@@ -262,6 +290,7 @@ Handles business logic for adding cards to inventory, updating variant quantitie
 - **Used By**: Controllers (add card to inventory)
 
 #### `updateVariantQuantity(inventoryItemVariantId: number, quantity: number)`
+
 - **Purpose**: Update quantity for an existing inventory item variant
 - **Parameters**:
   - `inventoryItemVariantId`: Inventory item variant ID
@@ -275,6 +304,7 @@ Handles business logic for adding cards to inventory, updating variant quantitie
 - **Used By**: Controllers (update inventory quantity)
 
 #### `removeCardFromInventory(userId: number, cardId: number)`
+
 - **Purpose**: Remove a card from user's inventory
 - **Parameters**:
   - `userId`: User ID
@@ -287,6 +317,7 @@ Handles business logic for adding cards to inventory, updating variant quantitie
 - **Used By**: Controllers (remove card from inventory)
 
 #### `resyncInventoryVariants(inventoryItemId: number)`
+
 - **Purpose**: Sync inventory variants with current card variants (manual operation)
 - **Parameters**:
   - `inventoryItemId`: Inventory item ID
@@ -301,6 +332,7 @@ Handles business logic for adding cards to inventory, updating variant quantitie
 - **Used By**: Controllers (manual resync after card variants change)
 
 ### Error Handling
+
 - Validation errors: Thrown as exceptions (card doesn't exist, already in inventory, invalid quantity)
 - Database errors: Thrown as exceptions
 
@@ -311,14 +343,17 @@ Handles business logic for adding cards to inventory, updating variant quantitie
 Service for manual card and variant corrections.
 
 ### Purpose
+
 Handles manual updates to card data when JustTCG data is incorrect or needs correction.
 
 ### Dependencies
+
 - Lucid models (Card, CardVariant)
 
 ### Methods
 
 #### `updateCard(cardId: number, updates: Partial<Card>)`
+
 - **Purpose**: Manually update card information
 - **Parameters**:
   - `cardId`: Card ID
@@ -332,6 +367,7 @@ Handles manual updates to card data when JustTCG data is incorrect or needs corr
 - **Used By**: Controllers (manual card correction)
 
 #### `updateCardVariant(variantId: number, updates: Partial<CardVariant>)`
+
 - **Purpose**: Manually update card variant information
 - **Parameters**:
   - `variantId`: Card variant ID
@@ -345,6 +381,7 @@ Handles manual updates to card data when JustTCG data is incorrect or needs corr
 - **Used By**: Controllers (manual variant correction)
 
 ### Error Handling
+
 - Validation errors: Thrown as exceptions (card/variant doesn't exist, invalid data)
 - Database errors: Thrown as exceptions
 
@@ -355,14 +392,17 @@ Handles manual updates to card data when JustTCG data is incorrect or needs corr
 Service for retrieving and formatting API usage statistics.
 
 ### Purpose
+
 Provides formatted API usage and rate limit information for display in the UI.
 
 ### Dependencies
+
 - Lucid models (User)
 
 ### Methods
 
 #### `getApiUsageStats(userId: number)`
+
 - **Purpose**: Get formatted API usage statistics
 - **Parameters**:
   - `userId`: User ID
@@ -390,6 +430,7 @@ Provides formatted API usage and rate limit information for display in the UI.
 - **Used By**: Controllers (API status display)
 
 #### `getRateLimitStatus(userId: number)`
+
 - **Purpose**: Get rate limit status and reset times
 - **Parameters**:
   - `userId`: User ID
@@ -406,6 +447,7 @@ Provides formatted API usage and rate limit information for display in the UI.
 - **Used By**: Controllers (rate limit status display)
 
 ### Error Handling
+
 - User not found: Thrown as exception
 
 ---
@@ -413,6 +455,7 @@ Provides formatted API usage and rate limit information for display in the UI.
 ## Service Usage Patterns
 
 ### In Jobs
+
 ```typescript
 // Example: SyncTrackedSetsProcessor
 const justTCGService = new JustTCGService()
@@ -421,6 +464,7 @@ await justTCGService.getCardsBySet(setId, trackedSet) // Auto-updates DB and tim
 ```
 
 ### In Controllers
+
 ```typescript
 // Example: SetsController - on-demand sync
 const justTCGService = new JustTCGService()
@@ -434,12 +478,15 @@ const inventoryItem = await inventoryService.addCardToInventory(userId, cardId)
 ```
 
 ### Rate Limit Checking
+
 All JustTCGService methods that make API calls:
+
 1. Check rate limit before calling SDK
 2. Update rate limit info after each API response
 3. Handle rate limit errors gracefully
 
 ### Error Propagation
+
 - Services throw exceptions for unrecoverable errors
 - Services return error objects for recoverable errors (rate limits, partial failures)
 - Jobs and controllers handle errors appropriately for their context
@@ -449,12 +496,14 @@ All JustTCGService methods that make API calls:
 ## Service Testing
 
 ### Unit Tests
+
 - Mock JustTCGService for other service tests
 - Mock database operations
 - Test business logic in isolation
 - Test error handling scenarios
 
 ### Integration Tests
+
 - Test with real JustTCGService (or mocked SDK)
 - Test database operations
 - Test rate limit integration

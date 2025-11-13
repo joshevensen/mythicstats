@@ -1,198 +1,85 @@
-# Forms & Actions
+# Inertia Forms & Actions
 
 ## Overview
-Create forms and action buttons for all user interactions.
+
+Implement user interactions with Inertia form helpers and PrimeVue inputs. All form submissions should use Inertia navigation to keep SPA experience intact.
 
 ## Step-by-Step Plan
 
-### 1. Track/Untrack Game Forms
+### 1. Shared Flash Messages
 
-**Files**: `resources/views/pages/games/index.edge` and `resources/views/pages/games/show.edge`
+- **File**: `start/inertia.ts`
+- Share `flash` data from the session so Vue pages can show success/error toasts via `<FlashMessages />`.
 
-**Implementation**: Simple form buttons
+### 2. Simple Action Buttons
 
-```edge
-@if(game.isTracked)
-  <form method="POST" action="/games/{{ game.id }}/track" style="display: inline;">
-    @csrfField()
-    <input type="hidden" name="_method" value="DELETE">
-    <button type="submit">Untrack</button>
-  </form>
-@else
-  <form method="POST" action="/games/{{ game.id }}/track" style="display: inline;">
-    @csrfField()
-    <button type="submit">Track</button>
-  </form>
-@end
-```
+- Use `router.post`, `router.patch`, `router.delete` to trigger controller actions directly from buttons.
+- Examples:
+  - Track/untrack game: `router.post(/games/:id/track)` / `router.delete(...)`
+  - Discover sets: `router.post(/games/:id/discover-sets)`
+  - Sync set: `router.post(/sets/:id/sync)`
+  - Update prices: `router.post(/inventory/update-prices)`
+- Add `preserveScroll: true` for idempotent operations to avoid jumping the viewport.
 
----
+### 3. Search & Filters
 
-### 2. Track/Untrack Set Forms
+- Use `useForm` with GET requests to maintain query params.
+- Example (`Cards/Index.vue`):
+  ```ts
+  const form = useForm({ search: props.filters.search ?? '' })
+  router.get(`/sets/${setId}/cards`, form.data(), { replace: true, preserveState: true })
+  ```
+- Keep filter state in the URL for deep linking.
 
-**Files**: `resources/views/pages/games/show.edge` and `resources/views/pages/sets/show.edge`
+### 4. Card Editing Form
 
-**Implementation**: Similar to track/untrack game forms
+- **File**: `resources/js/pages/Cards/Show.vue`
+- Wrap inputs with PrimeVue `InputText`/`Textarea`.
+- Use `useForm` for PATCH request to `/cards/:cardId`.
+- Parse JSON details before submit.
 
----
+### 5. Variant Price Updates
 
-### 3. Add to Inventory Form
+- Use reactive state per row and call `router.patch(/cards/variants/:variantId)`.
+- Provide loading feedback per row while awaiting response.
 
-**Files**: `resources/views/pages/cards/show.edge` and `resources/views/pages/cards/index.edge`
+### 6. Inventory Quantity Updates
 
-**Implementation**:
-```edge
-<form method="POST" action="/inventory">
-  @csrfField()
-  <input type="hidden" name="card_id" value="{{ card.id }}">
-  <textarea name="notes" placeholder="Notes (optional)"></textarea>
-  <button type="submit">Add to Inventory</button>
-</form>
-```
+- **Controller**: Redirect back with flash rather than returning JSON.
+- **UI**: Inline `InputNumber` with save button calling `router.patch(/inventory/variants/:id/quantity)`.
 
----
+### 7. Game Event Create/Edit
 
-### 4. Update Quantity Form
+- Reuse `<GameEventForm />` component.
+- For create: `form.post('/events')`
+- For edit: `form.patch('/events/:id')`
+- Convert PrimeVue `Calendar` values to ISO `yyyy-mm-dd` strings on submit.
 
-**File**: `resources/views/pages/inventory/show.edge`
+### 8. Confirmation UX
 
-**Implementation**: Inline quantity editing or modal
-
-```edge
-<form method="PATCH" action="/inventory/variants/{{ variant.id }}/quantity" class="inline-form">
-  @csrfField()
-  <input type="number" name="quantity" value="{{ variant.quantity }}" min="0">
-  <button type="submit">Update</button>
-</form>
-```
-
----
-
-### 5. Game Event Create/Edit Form
-
-**Files**: `resources/views/pages/game_events/create.edge` and `resources/views/pages/game_events/edit.edge`
-
-**Fields**:
-- Event type (dropdown: release, championship, tournament, ban, other)
-- Title (text input)
-- Description (textarea)
-- Start date (date input)
-- End date (date input, optional)
-- Affects pricing (checkbox)
-
-**Implementation**:
-```edge
-<form method="POST" action="/events">
-  @csrfField()
-  <input type="hidden" name="game_id" value="{{ game.id }}">
-  
-  <label>Event Type</label>
-  <select name="event_type" required>
-    <option value="release">Release</option>
-    <option value="championship">Championship</option>
-    <option value="tournament">Tournament</option>
-    <option value="ban">Ban</option>
-    <option value="other">Other</option>
-  </select>
-
-  <label>Title</label>
-  <input type="text" name="title" required>
-
-  <label>Description</label>
-  <textarea name="description"></textarea>
-
-  <label>Start Date</label>
-  <input type="date" name="start_date" required>
-
-  <label>End Date</label>
-  <input type="date" name="end_date">
-
-  <label>
-    <input type="checkbox" name="affects_pricing" value="1">
-    Affects Pricing
-  </label>
-
-  <button type="submit">Create Event</button>
-  <a href="/games/{{ game.id }}/events">Cancel</a>
-</form>
-```
-
----
-
-### 6. Manual JustTCG API Request Buttons
-
-**Files**: Various views
-
-**Discover Sets Button** (`resources/views/pages/games/show.edge`):
-```edge
-<form method="POST" action="/games/{{ game.id }}/discover-sets" style="display: inline;">
-  @csrfField()
-  <button type="submit" onclick="return confirm('This will use API requests. Continue?')">
-    Discover Sets
-  </button>
-</form>
-```
-
-**Sync Set Button** (`resources/views/pages/sets/show.edge`):
-```edge
-<form method="POST" action="/sets/{{ set.id }}/sync" style="display: inline;">
-  @csrfField()
-  <button type="submit" onclick="return confirm('This will use API requests. Continue?')">
-    Sync Set
-  </button>
-</form>
-```
-
-**Update Prices Button** (`resources/views/pages/inventory/index.edge`):
-```edge
-<form method="POST" action="/inventory/update-prices" style="display: inline;">
-  @csrfField()
-  <button type="submit" onclick="return confirm('This will use API requests. Continue?')">
-    Update Prices
-  </button>
-</form>
-```
-
-**Rate Limit Check**: Controllers should check rate limits before processing these requests.
-
----
-
-### 7. Manual Card Correction Form
-
-**File**: `resources/views/pages/cards/show.edge`
-
-**Purpose**: Allow manual correction of card/variant data
-
-**Implementation**: Edit form for card fields and variant fields
-
----
+- For destructive actions (delete event, untrack), use `window.confirm` or wire PrimeVue `ConfirmDialog`.
+- Ensure controllers flash success/error messages.
 
 ## Testing
 
-Test forms:
-
 ```bash
-# Start dev server
 npm run dev
 
-# Test forms in browser
-# Submit forms and verify actions work
-# Check validation errors display
-# Check success/error flash messages
+# Use the UI to:
+# - Track/untrack games and sets
+# - Create/edit game events
+# - Update inventory quantities
+# - Trigger price syncs
+# Confirm toast notifications appear and state updates without full page reloads.
 ```
-
----
 
 ## Completion Checklist
 
-- [ ] Track/untrack game forms created
-- [ ] Track/untrack set forms created
-- [ ] Add to inventory form created
-- [ ] Update quantity form created
-- [ ] Game event create/edit forms created
-- [ ] Manual API request buttons created
-- [ ] Card correction form created
-- [ ] Forms validate correctly
-- [ ] Flash messages display
-- [ ] Forms tested
-
+- [ ] All button actions use Inertia navigation
+- [ ] Search/filter forms preserve URL state
+- [ ] Card correction form patches successfully
+- [ ] Variant price updates persist and show feedback
+- [ ] Inventory quantity edits redirect with flash messages
+- [ ] Game event form works for create/edit flows
+- [ ] Manual API triggers surface success/error toasts
+- [ ] End-to-end interactions tested in browser

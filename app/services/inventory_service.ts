@@ -6,7 +6,10 @@ import PriceUpdateService from './price_update_service.js'
 export default class InventoryService {
   async addCardToInventory(userId: number, cardId: number, notes?: string) {
     await Card.findOrFail(cardId)
-    const existing = await InventoryItem.query().where('user_id', userId).where('card_id', cardId).first()
+    const existing = await InventoryItem.query()
+      .where('user_id', userId)
+      .where('card_id', cardId)
+      .first()
     if (existing) {
       if (notes !== undefined) {
         existing.notes = notes
@@ -18,7 +21,10 @@ export default class InventoryService {
   }
 
   async removeCardFromInventory(inventoryItemId: number, userId: number): Promise<boolean> {
-    const item = await InventoryItem.query().where('id', inventoryItemId).where('user_id', userId).first()
+    const item = await InventoryItem.query()
+      .where('id', inventoryItemId)
+      .where('user_id', userId)
+      .first()
     if (!item) return false
     await item.delete()
     return true
@@ -35,10 +41,12 @@ export default class InventoryService {
   }
 
   async resyncInventoryVariants(inventoryItemId: number, userId: number) {
-    const item = await InventoryItem.query().where('id', inventoryItemId).where('user_id', userId).firstOrFail()
-    // AfterCreate hook on InventoryItem creates variants when created.
-    // Here, we resync to current card variants.
-    const cardVariants = await (await item.related('card').query().firstOrFail()).related('variants').query()
+    const item = await InventoryItem.query()
+      .where('id', inventoryItemId)
+      .where('user_id', userId)
+      .firstOrFail()
+    const card = await item.related('card').query().firstOrFail()
+    const cardVariants = await card.related('variants').query()
     const existing = await item.related('variants').query()
     const existingByVariantId = new Map(existing.map((iv) => [iv.variantId, iv]))
 
@@ -75,5 +83,3 @@ export default class InventoryService {
     await priceService.updateInventoryPrices(userId)
   }
 }
-
-

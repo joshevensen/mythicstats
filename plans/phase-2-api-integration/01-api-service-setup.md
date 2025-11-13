@@ -1,6 +1,7 @@
 # API Service Setup
 
 ## Overview
+
 Install the JustTCG SDK and create the base JustTCGService wrapper class.
 
 ## Step-by-Step Plan
@@ -8,11 +9,13 @@ Install the JustTCG SDK and create the base JustTCGService wrapper class.
 ### 1. Install JustTCG SDK
 
 **Command**:
+
 ```bash
 npm install justtcg-js
 ```
 
 **Verify Installation**:
+
 ```bash
 npm list justtcg-js
 ```
@@ -24,6 +27,7 @@ npm list justtcg-js
 **File**: `.env`
 
 **Check**:
+
 - `JUSTTCG_API_KEY` is set
 - Value is valid (get from JustTCG dashboard)
 
@@ -38,6 +42,7 @@ npm list justtcg-js
 **Directory**: `app/services/`
 
 **Command** (if needed):
+
 ```bash
 mkdir -p app/services
 ```
@@ -49,6 +54,7 @@ mkdir -p app/services
 **File**: `app/services/JustTCGService.ts`
 
 **Structure**:
+
 ```typescript
 import { JustTCG } from 'justtcg-js'
 import User from '#models/user'
@@ -68,6 +74,7 @@ export default class JustTCGService {
 ```
 
 **Key Points**:
+
 - SDK automatically reads `JUSTTCG_API_KEY` from environment
 - Service is instantiated with a User instance (for rate limit checking)
 - Client is created once per service instance
@@ -81,6 +88,7 @@ export default class JustTCGService {
 **File**: `app/services/JustTCGService.ts`
 
 **Add Methods**:
+
 ```typescript
 /**
  * Check if API can be accessed
@@ -128,4 +136,3 @@ console.log('Service created successfully')
 - [ ] Service can be instantiated with User
 - [ ] Rate limit helper methods added
 - [ ] No TypeScript errors
-

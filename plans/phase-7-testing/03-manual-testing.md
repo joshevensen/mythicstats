@@ -1,6 +1,7 @@
 # Manual Testing
 
 ## Overview
+
 Manual testing checklist to verify application functionality with real API calls and user workflows.
 
 ## Step-by-Step Plan
@@ -8,6 +9,7 @@ Manual testing checklist to verify application functionality with real API calls
 ### 1. Test with Real JustTCG API
 
 **Scenarios**:
+
 - [ ] Fetch games from JustTCG
 - [ ] Fetch sets for a game
 - [ ] Fetch cards for a set
@@ -16,6 +18,7 @@ Manual testing checklist to verify application functionality with real API calls
 - [ ] Test with rate limited state
 
 **Steps**:
+
 1. Set up test environment with real API key
 2. Make API calls through service
 3. Verify data persists to database
@@ -27,12 +30,14 @@ Manual testing checklist to verify application functionality with real API calls
 ### 2. Test Rate Limit Scenarios
 
 **Scenarios**:
+
 - [ ] Jobs reschedule when rate limited
 - [ ] Manual requests check rate limits
 - [ ] Rate limit info displays correctly
 - [ ] Rate limits reset correctly
 
 **Steps**:
+
 1. Set user to rate limited state
 2. Try to make API request
 3. Verify request is blocked/rescheduled
@@ -44,6 +49,7 @@ Manual testing checklist to verify application functionality with real API calls
 ### 3. Test Inventory Management
 
 **Scenarios**:
+
 - [ ] Add card to inventory
 - [ ] Inventory variants created automatically
 - [ ] Update variant quantity
@@ -52,6 +58,7 @@ Manual testing checklist to verify application functionality with real API calls
 - [ ] Price updates work
 
 **Steps**:
+
 1. Add a card to inventory
 2. Verify variants created
 3. Update quantities
@@ -64,6 +71,7 @@ Manual testing checklist to verify application functionality with real API calls
 ### 4. Test Game Event Creation
 
 **Scenarios**:
+
 - [ ] Create event
 - [ ] Edit event
 - [ ] Delete event
@@ -71,6 +79,7 @@ Manual testing checklist to verify application functionality with real API calls
 - [ ] Events display correctly
 
 **Steps**:
+
 1. Create a game event
 2. Edit the event
 3. Delete the event
@@ -81,6 +90,7 @@ Manual testing checklist to verify application functionality with real API calls
 ### 5. Test Data Synchronization
 
 **Scenarios**:
+
 - [ ] Track a game
 - [ ] Discover sets for tracked game
 - [ ] Track a set
@@ -88,6 +98,7 @@ Manual testing checklist to verify application functionality with real API calls
 - [ ] Verify incremental updates work
 
 **Steps**:
+
 1. Track a game
 2. Run discover-sets job
 3. Track a set
@@ -99,6 +110,7 @@ Manual testing checklist to verify application functionality with real API calls
 ### 6. Test Manual API Requests
 
 **Scenarios**:
+
 - [ ] Discover sets button works
 - [ ] Sync set button works
 - [ ] Update prices button works
@@ -106,6 +118,7 @@ Manual testing checklist to verify application functionality with real API calls
 - [ ] Success/error messages display
 
 **Steps**:
+
 1. Click "Discover Sets" button
 2. Click "Sync Set" button
 3. Click "Update Prices" button
@@ -135,4 +148,3 @@ Manual testing checklist to verify application functionality with real API calls
 - [ ] Data synchronization tested
 - [ ] Manual API requests tested
 - [ ] All manual tests passed
-

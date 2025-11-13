@@ -6,42 +6,85 @@ import TrackedSet from '#models/tracked_set'
 import TrackingService from '#services/tracking_service'
 import JustTCGService from '#services/just_tcg_service'
 
+function serializeTrackedGame(trackedGame: TrackedGame | null) {
+  if (!trackedGame) return null
+  return {
+    id: trackedGame.id,
+    isActive: trackedGame.isActive,
+    lastSetsDiscoveryAt: trackedGame.lastSetsDiscoveryAt?.toISO() ?? null,
+    createdAt: trackedGame.createdAt.toISO(),
+  }
+}
+
+function serializeTrackedSet(trackedSet: TrackedSet | null) {
+  if (!trackedSet) return null
+  return {
+    id: trackedSet.id,
+    isActive: trackedSet.isActive,
+    lastSyncAt: trackedSet.lastSyncAt?.toISO() ?? null,
+    createdAt: trackedSet.createdAt.toISO(),
+  }
+}
+
 export default class GamesController {
-  async index({ auth, view }: HttpContext) {
+  async index({ auth, inertia }: HttpContext) {
     const user = await auth.getUserOrFail()
     const games = await Game.query().orderBy('name', 'asc')
-    const trackedGameIds = await TrackedGame.query().where('user_id', user.id).pluck('game_id')
-    const gamesWithTracking = await Promise.all(
-      games.map(async (game) => {
-        const tracked = trackedGameIds.includes(game.id)
-        const trackedGame = tracked
-          ? await TrackedGame.query().where('user_id', user.id).where('game_id', game.id).first()
-          : null
-        return { ...game.serialize(), isTracked: tracked, trackedGame }
-      })
-    )
-    return view.render('pages/games/index', { games: gamesWithTracking })
+    const trackedGames = await TrackedGame.query().where('user_id', user.id)
+    const trackedMap = new Map(trackedGames.map((tg) => [tg.gameId, tg]))
+
+    const gamesWithTracking = games.map((game) => ({
+      id: game.id,
+      name: game.name,
+      slug: game.slug,
+      cardsCount: game.cardsCount,
+      setsCount: game.setsCount,
+      isTracked: trackedMap.has(game.id),
+      trackedGame: serializeTrackedGame(trackedMap.get(game.id) ?? null),
+    }))
+
+    return inertia.render('Games/Index', { games: gamesWithTracking })
   }
 
-  async show({ params, auth, view }: HttpContext) {
+  async show({ params, auth, inertia }: HttpContext) {
     const user = await auth.getUserOrFail()
     const game = await Game.findOrFail(params.gameId)
     const sets = await Set.query().where('game_id', game.id).orderBy('release_date', 'desc')
-    const trackedSetIds = await TrackedSet.query()
+
+    const trackedSets = await TrackedSet.query()
       .where('user_id', user.id)
-      .whereIn('set_id', sets.map((s) => s.id))
-      .pluck('set_id')
-    const setsWithTracking = await Promise.all(
-      sets.map(async (set) => {
-        const tracked = trackedSetIds.includes(set.id)
-        const trackedSet = tracked
-          ? await TrackedSet.query().where('user_id', user.id).where('set_id', set.id).first()
-          : null
-        return { ...set.serialize(), isTracked: tracked, trackedSet }
-      })
-    )
-    const trackedGame = await TrackedGame.query().where('user_id', user.id).where('game_id', game.id).first()
-    return view.render('pages/games/show', { game, sets: setsWithTracking, trackedGame })
+      .whereIn(
+        'set_id',
+        sets.map((s) => s.id)
+      )
+
+    const trackedSetMap = new Map(trackedSets.map((ts) => [ts.setId, ts]))
+    const trackedGame = await TrackedGame.query()
+      .where('user_id', user.id)
+      .where('game_id', game.id)
+      .first()
+
+    const setsWithTracking = sets.map((set) => ({
+      id: set.id,
+      name: set.name,
+      slug: set.slug,
+      releaseDate: set.releaseDate?.toISODate() ?? null,
+      cardsCount: set.cardsCount,
+      isTracked: trackedSetMap.has(set.id),
+      trackedSet: serializeTrackedSet(trackedSetMap.get(set.id) ?? null),
+    }))
+
+    return inertia.render('Games/Show', {
+      game: {
+        id: game.id,
+        name: game.name,
+        slug: game.slug,
+        cardsCount: game.cardsCount,
+        setsCount: game.setsCount,
+      },
+      sets: setsWithTracking,
+      trackedGame: serializeTrackedGame(trackedGame ?? null),
+    })
   }
 
   async track({ params, auth, response }: HttpContext) {
@@ -81,5 +124,3 @@ export default class GamesController {
     return response.redirect().back()
   }
 }
-
-

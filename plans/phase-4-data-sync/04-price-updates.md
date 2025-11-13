@@ -1,6 +1,7 @@
 # Price Updates
 
 ## Overview
+
 Implement price update logic for inventory variants, prioritizing inventory items and using batch operations.
 
 ## Step-by-Step Plan
@@ -8,6 +9,7 @@ Implement price update logic for inventory variants, prioritizing inventory item
 ### 1. Review Price Update Requirements
 
 **Key Points**:
+
 - Update prices for inventory variants
 - Prioritize inventory items (update more frequently)
 - Use batch operations (getCardsBatch)
@@ -24,6 +26,7 @@ Implement price update logic for inventory variants, prioritizing inventory item
 **Scope**: `needsPriceUpdate()`
 
 **Implementation**:
+
 ```typescript
 static needsPriceUpdate() {
   return this.query()
@@ -46,13 +49,14 @@ static needsPriceUpdate() {
 **Method**: `updateInventoryPrices(userId)`
 
 **Implementation**:
+
 ```typescript
 async updateInventoryPrices(userId: number): Promise<void> {
   const User = await import('#models/user')
   const user = await User.default.findOrFail(userId)
-  
+
   const justTcgService = new JustTCGService(user)
-  
+
   // Get inventory variants needing price updates
   const variants = await InventoryItemVariant.query()
     .whereHas('inventoryItem', (query) => {
@@ -113,12 +117,14 @@ async updateInventoryPrices(userId: number): Promise<void> {
 ### 5. Handle Price Update Edge Cases
 
 **Scenarios**:
+
 - No inventory variants need updates
 - Variant not found in JustTCG
 - Price update fails for some variants
 - Rate limits during batch updates
 
 **Handling**:
+
 - No updates: Return early
 - Not found: Log error, continue with other variants
 - Partial failure: Continue with remaining batches
@@ -135,13 +141,14 @@ async updateInventoryPrices(userId: number): Promise<void> {
 **Purpose**: Manual price update (on-demand from controller)
 
 **Implementation**:
+
 ```typescript
 async updatePricesForInventory(userId: number, inventoryItemId?: number): Promise<void> {
   const User = await import('#models/user')
   const user = await User.default.findOrFail(userId)
-  
+
   const justTcgService = new JustTCGService(user)
-  
+
   // Build query
   let query = InventoryItemVariant.query()
     .whereHas('inventoryItem', (q) => q.where('user_id', userId))
@@ -178,8 +185,7 @@ await inventoryService.updateInventoryPrices(user.id)
 
 // Verify prices updated
 const InventoryItemVariant = await import('#models/inventory_item_variant')
-const variants = await InventoryItemVariant.default.query()
-  .whereNotNull('last_price_update_at')
+const variants = await InventoryItemVariant.default.query().whereNotNull('last_price_update_at')
 console.log('Variants with updated prices:', variants.length)
 ```
 
@@ -195,4 +201,3 @@ console.log('Variants with updated prices:', variants.length)
 - [ ] Works with UpdateInventoryPricesProcessor
 - [ ] Manual price update method available
 - [ ] Price updates tested
-

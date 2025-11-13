@@ -1,6 +1,7 @@
 # Phase 2: JustTCG API Integration
 
 ## Overview
+
 Set up the JustTCG API service wrapper with rate limiting, error handling, and all API methods.
 
 ## Steps
@@ -29,4 +30,3 @@ Set up the JustTCG API service wrapper with rate limiting, error handling, and a
 - [ ] Rate limiting logic working
 - [ ] Error handling implemented
 - [ ] Service tested with real API calls
-

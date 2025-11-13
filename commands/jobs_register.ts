@@ -13,5 +13,3 @@ export default class JobsRegister extends BaseCommand {
     this.logger.info('Repeatable jobs registered')
   }
 }
-
-

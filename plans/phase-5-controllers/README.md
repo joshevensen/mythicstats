@@ -1,6 +1,7 @@
 # Phase 5: Controllers & Routes
 
 ## Overview
+
 Create HTTP controllers and routes for all application pages and actions.
 
 ## Steps
@@ -31,4 +32,3 @@ Create HTTP controllers and routes for all application pages and actions.
 - [ ] Routes protected with auth
 - [ ] Controllers tested
 - [ ] Manual API request actions working
-

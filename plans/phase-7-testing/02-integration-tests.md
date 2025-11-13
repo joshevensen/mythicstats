@@ -1,6 +1,7 @@
 # Integration Tests
 
 ## Overview
+
 Create integration tests for API integration, job execution, and data synchronization.
 
 ## Step-by-Step Plan
@@ -12,6 +13,7 @@ Create integration tests for API integration, job execution, and data synchroniz
 **Purpose**: Test JustTCGService with mocked SDK responses
 
 **Scenarios**:
+
 - Successful API calls
 - Rate limit errors
 - Network errors
@@ -28,6 +30,7 @@ Create integration tests for API integration, job execution, and data synchroniz
 **Purpose**: Test job processors with mocked services
 
 **Scenarios**:
+
 - Jobs execute successfully
 - Jobs handle rate limits
 - Jobs reschedule correctly
@@ -44,6 +47,7 @@ Create integration tests for API integration, job execution, and data synchroniz
 **Purpose**: Test sync logic end-to-end
 
 **Scenarios**:
+
 - Sets discovery syncs sets to database
 - Card sync syncs cards and variants
 - Price updates update variant prices
@@ -58,6 +62,7 @@ Create integration tests for API integration, job execution, and data synchroniz
 **Purpose**: Test rate limit integration
 
 **Scenarios**:
+
 - Jobs reschedule when rate limited
 - Rate limit info updates from API responses
 - Controllers check rate limits before manual requests
@@ -82,4 +87,3 @@ npm test -- --files tests/integration
 - [ ] Rate limit handling tests written
 - [ ] All integration tests passing
 - [ ] Mocks working correctly
-

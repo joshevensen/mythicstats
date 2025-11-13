@@ -45,7 +45,10 @@ export class UpdateInventoryPricesProcessor extends BaseProcessor {
       if (!canProceed) return
       const batch = justTcgCardIds.slice(i, i + batchSize)
       await this.justTcgService.getCardsBatch(batch as unknown as string[])
-      await job.updateProgress({ processed: Math.min(i + batchSize, justTcgCardIds.length), total: justTcgCardIds.length })
+      await job.updateProgress({
+        processed: Math.min(i + batchSize, justTcgCardIds.length),
+        total: justTcgCardIds.length,
+      })
     }
 
     // Mark all inventory variants as updated now
@@ -57,5 +60,3 @@ export class UpdateInventoryPricesProcessor extends BaseProcessor {
     }
   }
 }
-
-

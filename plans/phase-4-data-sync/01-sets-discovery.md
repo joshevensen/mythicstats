@@ -1,6 +1,7 @@
 # Sets Discovery
 
 ## Overview
+
 Implement logic to discover available sets for tracked games and store them in the database.
 
 ## Step-by-Step Plan
@@ -14,6 +15,7 @@ Implement logic to discover available sets for tracked games and store them in t
 **Reference**: [Services - TrackingService](../../docs/05-services.md#2-trackingservice)
 
 **Key Methods**:
+
 - `trackGame(userId, gameId)` - Add game to tracked_games
 - `getTrackedGames(userId)` - Get all tracked games for user
 - `getActiveTrackedGames(userId)` - Get active tracked games
@@ -27,13 +29,14 @@ Implement logic to discover available sets for tracked games and store them in t
 **Method**: `discoverSetsForTrackedGames(userId)`
 
 **Implementation**:
+
 ```typescript
 async discoverSetsForTrackedGames(userId: number): Promise<void> {
   const User = await import('#models/user')
   const user = await User.default.findOrFail(userId)
-  
+
   const justTcgService = new JustTCGService(user)
-  
+
   // Get all active tracked games
   const trackedGames = await TrackedGame.query()
     .where('user_id', userId)
@@ -49,7 +52,7 @@ async discoverSetsForTrackedGames(userId: number): Promise<void> {
 
     // Fetch sets from JustTCG
     await justTcgService.getSets(trackedGame.gameId, trackedGame)
-    
+
     // Mark discovery complete (done by getSets if trackedGame provided)
   }
 }
@@ -66,6 +69,7 @@ async discoverSetsForTrackedGames(userId: number): Promise<void> {
 **Action**: Use TrackingService or implement discovery logic directly
 
 **Implementation**:
+
 ```typescript
 import TrackingService from '#services/TrackingService'
 
@@ -80,7 +84,7 @@ export class DiscoverSetsProcessor extends BaseProcessor {
   protected async handle(job: Job): Promise<void> {
     // Use service method or implement directly
     await this.trackingService.discoverSetsForTrackedGames(this.user.id)
-    
+
     // Or implement directly:
     const trackedGames = await TrackedGame.query()
       .where('user_id', this.user.id)
@@ -92,9 +96,7 @@ export class DiscoverSetsProcessor extends BaseProcessor {
         continue
       }
 
-      await this.makeApiCall(() =>
-        this.justTcgService.getSets(trackedGame.gameId, trackedGame)
-      )
+      await this.makeApiCall(() => this.justTcgService.getSets(trackedGame.gameId, trackedGame))
     }
   }
 }
@@ -105,12 +107,14 @@ export class DiscoverSetsProcessor extends BaseProcessor {
 ### 4. Handle Discovery Edge Cases
 
 **Scenarios to Handle**:
+
 - Game has no sets (empty response)
 - Game not found in JustTCG
 - Network errors during discovery
 - Rate limits during discovery
 
 **Implementation**: Already handled by:
+
 - JustTCGService error handling
 - Base processor rate limit checking
 - Job retry logic
@@ -149,4 +153,3 @@ console.log('Sets discovered:', sets.length)
 - [ ] Handles edge cases
 - [ ] Works with DiscoverSetsProcessor
 - [ ] Sets discovery tested
-

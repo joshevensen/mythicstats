@@ -1,6 +1,7 @@
 # Sets Controller
 
 ## Overview
+
 Create the sets controller for viewing set details and managing tracked sets.
 
 ## Step-by-Step Plan
@@ -10,6 +11,7 @@ Create the sets controller for viewing set details and managing tracked sets.
 **File**: `app/controllers/sets_controller.ts`
 
 **Command**:
+
 ```bash
 node ace make:controller Sets
 ```
@@ -25,6 +27,7 @@ node ace make:controller Sets
 **Purpose**: Show set information and card summary
 
 **Implementation**:
+
 ```typescript
 import type { HttpContext } from '@adonisjs/core/http'
 import Set from '#models/set'
@@ -95,6 +98,7 @@ export default class SetsController {
 **Route**: `POST /sets/:setId/track`
 
 **Implementation**:
+
 ```typescript
 import TrackingService from '#services/TrackingService'
 
@@ -117,6 +121,7 @@ async track({ params, auth, response }: HttpContext) {
 **Route**: `DELETE /sets/:setId/track`
 
 **Implementation**:
+
 ```typescript
 async untrack({ params, auth, response }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -137,6 +142,7 @@ async untrack({ params, auth, response }: HttpContext) {
 **Route**: `PATCH /sets/:setId/track`
 
 **Implementation**:
+
 ```typescript
 async toggleActive({ params, auth, response }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -159,6 +165,7 @@ async toggleActive({ params, auth, response }: HttpContext) {
 **Purpose**: Manually trigger card sync (JustTCG API request)
 
 **Implementation**:
+
 ```typescript
 async sync({ params, auth, response, session }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -190,6 +197,7 @@ async sync({ params, auth, response, session }: HttpContext) {
 **File**: `start/routes.ts`
 
 **Implementation**:
+
 ```typescript
 router
   .group(() => {
@@ -233,4 +241,3 @@ await controller.sync({ ...mockCtx, params: { setId: '1' } })
 - [ ] Manual sync action implemented
 - [ ] All routes added
 - [ ] Controller tested
-

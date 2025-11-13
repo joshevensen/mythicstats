@@ -39,11 +39,9 @@ export default class GameEvent extends BaseModel {
 
   static active = scope((query) => {
     const now = DateTime.now()
-    query
-      .where('start_date', '<=', now.toSQLDate())
-      .where((q) => {
-        q.whereNull('end_date').orWhere('end_date', '>=', now.toSQLDate())
-      })
+    query.where('start_date', '<=', now.toSQLDate()).where((q) => {
+      q.whereNull('end_date').orWhere('end_date', '>=', now.toSQLDate())
+    })
   })
 
   static upcoming = scope((query) => {

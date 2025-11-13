@@ -1,6 +1,7 @@
 # Job Scheduling
 
 ## Overview
+
 Set up repeatable jobs with proper scheduling, priorities, and job registration on app boot.
 
 ## Step-by-Step Plan
@@ -12,6 +13,7 @@ Set up repeatable jobs with proper scheduling, priorities, and job registration 
 **Purpose**: Register and schedule all repeatable jobs
 
 **Implementation**:
+
 ```typescript
 import { Queue } from 'bullmq'
 import QueueService from '#services/QueueService'
@@ -24,7 +26,7 @@ export async function registerJobs() {
   // Get user (single user system)
   const User = await import('#models/user')
   const user = await User.default.first()
-  
+
   if (!user) {
     throw new Error('No user found. Create a user first.')
   }
@@ -79,6 +81,7 @@ export async function registerJobs() {
 **Action**: Call `registerJobs()` when app starts
 
 **Implementation**:
+
 ```typescript
 // In app_provider.ts
 import { ApplicationContract } from '@adonisjs/core/types'
@@ -103,6 +106,7 @@ export default class AppProvider {
 **Purpose**: Process jobs from queue
 
 **Implementation**:
+
 ```typescript
 import { Worker } from 'bullmq'
 import bullmqConfig from '#config/bullmq'
@@ -153,11 +157,13 @@ process.on('SIGTERM', async () => {
 **Purpose**: Ace command to start worker
 
 **Command**:
+
 ```bash
 node ace make:command bullmq_worker
 ```
 
 **Implementation**:
+
 ```typescript
 import { BaseCommand, args, flags } from '@adonisjs/core/ace'
 import { execa } from 'execa'
@@ -169,9 +175,9 @@ export default class BullmqWorker extends BaseCommand {
   async run() {
     // Import and start worker
     await import('#start/worker')
-    
+
     this.logger.info('BullMQ worker started')
-    
+
     // Keep process alive
     process.on('SIGINT', () => {
       this.logger.info('Shutting down worker...')
@@ -182,6 +188,7 @@ export default class BullmqWorker extends BaseCommand {
 ```
 
 **Usage**:
+
 ```bash
 node ace bullmq:worker
 ```
@@ -195,6 +202,7 @@ node ace bullmq:worker
 **Update**: Add priority configuration
 
 **Implementation**:
+
 ```typescript
 queues: {
   'mythicstats-jobs': {
@@ -212,6 +220,7 @@ queues: {
 ```
 
 **Priority Order**:
+
 1. `update-inventory-prices` - Priority 3 (High)
 2. `sync-tracked-sets` - Priority 2 (Medium)
 3. `discover-sets` - Priority 1 (Low)
@@ -225,6 +234,7 @@ queues: {
 **Purpose**: Helper methods for managing jobs
 
 **Implementation**:
+
 ```typescript
 async getRepeatableJobs(): Promise<any[]> {
   const queue = this.getQueue('mythicstats-jobs')
@@ -280,4 +290,3 @@ console.log('Repeatable jobs:', repeatableJobs)
 - [ ] Worker can process jobs
 - [ ] Jobs execute at scheduled times
 - [ ] Job management methods implemented
-

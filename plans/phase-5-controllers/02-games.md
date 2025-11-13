@@ -1,6 +1,7 @@
 # Games Controller
 
 ## Overview
+
 Create the games controller for listing games, viewing game details, and managing tracked games.
 
 ## Step-by-Step Plan
@@ -10,6 +11,7 @@ Create the games controller for listing games, viewing game details, and managin
 **File**: `app/controllers/games_controller.ts`
 
 **Command**:
+
 ```bash
 node ace make:controller Games
 ```
@@ -25,6 +27,7 @@ node ace make:controller Games
 **Purpose**: List all available games with tracked status
 
 **Implementation**:
+
 ```typescript
 import type { HttpContext } from '@adonisjs/core/http'
 import Game from '#models/game'
@@ -39,19 +42,14 @@ export default class GamesController {
     const games = await Game.query().orderBy('name', 'asc')
 
     // Get tracked games for user
-    const trackedGames = await TrackedGame.query()
-      .where('user_id', user.id)
-      .pluck('game_id')
+    const trackedGames = await TrackedGame.query().where('user_id', user.id).pluck('game_id')
 
     // Mark which games are tracked
     const gamesWithTracking = games.map((game) => ({
       ...game.serialize(),
       isTracked: trackedGames.includes(game.id),
       trackedGame: trackedGames.includes(game.id)
-        ? await TrackedGame.query()
-            .where('user_id', user.id)
-            .where('game_id', game.id)
-            .first()
+        ? await TrackedGame.query().where('user_id', user.id).where('game_id', game.id).first()
         : null,
     }))
 
@@ -75,6 +73,7 @@ export default class GamesController {
 **Purpose**: Show game details with sets list
 
 **Implementation**:
+
 ```typescript
 async show({ params, auth, view }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -132,6 +131,7 @@ async show({ params, auth, view }: HttpContext) {
 **Purpose**: Add game to tracked games
 
 **Implementation**:
+
 ```typescript
 import TrackingService from '#services/TrackingService'
 
@@ -158,6 +158,7 @@ async track({ params, auth, response }: HttpContext) {
 **Purpose**: Remove game from tracked games
 
 **Implementation**:
+
 ```typescript
 async untrack({ params, auth, response }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -180,6 +181,7 @@ async untrack({ params, auth, response }: HttpContext) {
 **Purpose**: Toggle is_active status
 
 **Implementation**:
+
 ```typescript
 async toggleActive({ params, auth, response }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -202,6 +204,7 @@ async toggleActive({ params, auth, response }: HttpContext) {
 **Purpose**: Manually trigger sets discovery (JustTCG API request)
 
 **Implementation**:
+
 ```typescript
 async discoverSets({ params, auth, response, session }: HttpContext) {
   const user = auth.getUserOrFail()
@@ -233,6 +236,7 @@ async discoverSets({ params, auth, response, session }: HttpContext) {
 **File**: `start/routes.ts`
 
 **Implementation**:
+
 ```typescript
 router
   .group(() => {
@@ -278,4 +282,3 @@ await controller.show({ ...mockCtx, params: { gameId: '1' } })
 - [ ] Discover sets action implemented
 - [ ] All routes added
 - [ ] Controller tested
-

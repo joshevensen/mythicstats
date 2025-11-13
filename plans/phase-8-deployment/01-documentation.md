@@ -1,6 +1,7 @@
 # Documentation
 
 ## Overview
+
 Complete any missing documentation and ensure all documentation is up to date.
 
 ## Step-by-Step Plan
@@ -10,6 +11,7 @@ Complete any missing documentation and ensure all documentation is up to date.
 **Files**: All files in `docs/` directory
 
 **Check**:
+
 - [ ] All documents are complete
 - [ ] No outdated information
 - [ ] All references are correct
@@ -32,6 +34,7 @@ Complete any missing documentation and ensure all documentation is up to date.
 **File**: `docs/02-setup-configuration.md`
 
 **Check**:
+
 - [ ] All steps are accurate
 - [ ] Environment variables documented
 - [ ] Commands are correct
@@ -46,6 +49,7 @@ Complete any missing documentation and ensure all documentation is up to date.
 **Ensure**: All environment variables are documented with descriptions
 
 **Current Variables**:
+
 - Database variables
 - JustTCG API key
 - Redis variables
@@ -58,6 +62,7 @@ Complete any missing documentation and ensure all documentation is up to date.
 **File**: `docs/07-bullmq-job-system.md`
 
 **Check**:
+
 - [ ] Job frequencies documented
 - [ ] Job priorities documented
 - [ ] How to start workers documented
@@ -72,6 +77,7 @@ Complete any missing documentation and ensure all documentation is up to date.
 **Purpose**: Quick start guide for the project
 
 **Content**:
+
 - Project description
 - Quick start
 - Links to documentation
@@ -87,4 +93,3 @@ Complete any missing documentation and ensure all documentation is up to date.
 - [ ] Job scheduling documented
 - [ ] Project README created
 - [ ] All documentation accurate
-

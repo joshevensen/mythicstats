@@ -5,6 +5,7 @@ This directory contains the complete planning and design documentation for the M
 ## Documentation Index
 
 ### 1. [Project Overview](./01-project-overview.md)
+
 High-level overview of the project, its purpose, core functionality, and technology stack.
 
 **Read this first** to understand what we're building.
@@ -12,7 +13,9 @@ High-level overview of the project, its purpose, core functionality, and technol
 ---
 
 ### 2. [Setup & Configuration](./02-setup-configuration.md)
+
 Initial setup and configuration guide:
+
 - Prerequisites and installation
 - Environment variables
 - Database and Redis setup
@@ -26,7 +29,9 @@ Initial setup and configuration guide:
 ---
 
 ### 3. [Database Schema](./03-database-schema.md)
+
 Complete database schema design including:
+
 - All tables with columns and types
 - Relationships between tables
 - Indexes and constraints
@@ -37,7 +42,9 @@ Complete database schema design including:
 ---
 
 ### 4. [Data Models](./04-data-models.md)
+
 Lucid model specifications:
+
 - All models with fields and types
 - Model relationships
 - Model methods and scopes
@@ -49,7 +56,9 @@ Lucid model specifications:
 ---
 
 ### 5. [Services](./05-services.md)
+
 Service layer architecture and methods:
+
 - JustTCGService (API wrapper)
 - TrackingService (track/untrack games and sets)
 - InventoryService (inventory management)
@@ -61,7 +70,9 @@ Service layer architecture and methods:
 ---
 
 ### 6. [JustTCG API Integration](./06-just-tcg-api-integration.md)
+
 Reference for JustTCG API:
+
 - API endpoints and structure
 - Rate limiting details and plan limits
 - SDK setup and configuration
@@ -74,7 +85,9 @@ Reference for JustTCG API:
 ---
 
 ### 7. [BullMQ Job System](./07-bullmq-job-system.md)
+
 Architecture for the job queue system:
+
 - Job types and their purposes
 - Job scheduling and priorities
 - Rate limit integration
@@ -86,7 +99,9 @@ Architecture for the job queue system:
 ---
 
 ### 8. [User Workflows](./08-user-workflows.md)
+
 User-facing workflows for key processes:
+
 - Initial setup
 - Inventory management
 - Price updates
@@ -101,7 +116,9 @@ User-facing workflows for key processes:
 ---
 
 ### 9. [Pages & Views](./09-pages-views.md)
+
 Page structure and UI design:
+
 - Dashboard
 - Games, Sets, Cards pages
 - Inventory management
@@ -113,7 +130,9 @@ Page structure and UI design:
 ---
 
 ### 10. [Implementation Plans](../plans/README.md)
+
 Step-by-step implementation plans organized by phase:
+
 - Phase-by-phase breakdown
 - Individual task plans with detailed steps
 - Code examples and references
@@ -137,22 +156,26 @@ Step-by-step implementation plans organized by phase:
 ## Key Concepts
 
 ### Rate Limiting
+
 - Tracked in `users` table with fields: `api_requests_remaining`, `api_daily_requests_remaining`, `api_plan`, etc.
 - When `api_requests_remaining > 0` and `api_daily_requests_remaining > 0`: API can be accessed
 - When either is 0: Jobs wait until limits reset (daily at midnight UTC, monthly based on plan)
 - Rate limit info is automatically updated from SDK response `usage` object after every API call
 
 ### Tracked Games
+
 - Only games in `tracked_games` table are synced
 - Prevents unnecessary API calls
 - User controls which games to track
 
 ### Inventory Priority
+
 - Cards in inventory get price updates more frequently
 - Inventory items have `last_price_update_at` to track update frequency
 - Price updates prioritize inventory items
 
 ### Job System
+
 - BullMQ manages all background jobs
 - Jobs check rate limits before making API calls
 - Jobs reschedule themselves when rate limited
@@ -173,8 +196,8 @@ Step-by-step implementation plans organized by phase:
 ## Questions or Updates
 
 As the project evolves, update these documents to reflect:
+
 - Changes in API structure
 - Additional features
 - Refinements to workflows
 - Lessons learned during implementation
-
