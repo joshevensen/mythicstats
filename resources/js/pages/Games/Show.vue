@@ -76,14 +76,13 @@
         <Tag severity="info" :value="`${filteredSets.length} sets`" />
       </div>
 
-      <DataTable
+      <Table
         :value="filteredSets"
         dataKey="id"
         :sortField="'releaseDate'"
         :sortOrder="-1"
         paginator
         :rows="15"
-        responsiveLayout="scroll"
       >
         <Column field="name" header="Set" sortable />
         <Column header="Release Date" sortable>
@@ -146,7 +145,7 @@
             </div>
           </template>
         </Column>
-      </DataTable>
+      </Table>
     </SectionCard>
   </AppLayout>
 </template>
@@ -157,13 +156,13 @@ import { router } from '@inertiajs/vue3'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Tag from 'primevue/tag'
 
 import AppLayout from '@/components/AppLayout.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
 import TrackedStatus from '@/components/TrackedStatus.vue'
 
 interface TrackedGame {

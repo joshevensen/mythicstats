@@ -1,5 +1,5 @@
 <template>
-  <Card class="w-full shadow-1">
+  <Card class="w-full shadow-1 p-4">
     <template #title>
       <div class="flex items-center justify-between gap-3">
         <div class="flex flex-col gap-1">

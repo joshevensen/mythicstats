@@ -15,7 +15,7 @@
     </PageHeader>
 
     <SectionCard title="Event Timeline" :subtitle="`${events.length} total events`">
-      <DataTable :value="events" dataKey="id" paginator :rows="15" responsiveLayout="scroll">
+      <Table :value="events" dataKey="id" paginator :rows="15">
         <Column field="title" header="Title" sortable />
         <Column field="eventType" header="Type" sortable>
           <template #body="{ data }">
@@ -55,13 +55,15 @@
                 size="small"
                 severity="danger"
                 outlined
-                @click="destroy(data.id)"
+                @click="destroy(data.id, $event)"
               />
             </div>
           </template>
         </Column>
-      </DataTable>
+      </Table>
     </SectionCard>
+
+    <ConfirmPopup />
   </AppLayout>
 </template>
 
@@ -69,12 +71,14 @@
 import { router } from '@inertiajs/vue3'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
+import ConfirmPopup from 'primevue/confirmpopup'
 import Tag from 'primevue/tag'
+import { useConfirm } from 'primevue/useconfirm'
 
 import AppLayout from '@/components/AppLayout.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
 
 interface Game {
   id: number
@@ -99,6 +103,8 @@ const props = defineProps<{
 const game = props.game
 const events = props.events
 
+const confirm = useConfirm()
+
 function formatType(type: string) {
   return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
@@ -107,12 +113,16 @@ function navigate(url: string) {
   router.visit(url)
 }
 
-function destroy(eventId: number) {
-  if (!window.confirm('Delete this event?')) {
-    return
-  }
-  router.delete(`/events/${eventId}`, {
-    preserveScroll: true,
+function destroy(eventId: number, event: Event) {
+  confirm.require({
+    target: event.currentTarget as EventTarget,
+    message: 'Delete this event?',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => {
+      router.delete(`/events/${eventId}`, {
+        preserveScroll: true,
+      })
+    },
   })
 }
 </script>

@@ -13,13 +13,12 @@
     </PageHeader>
 
     <SectionCard title="Inventory Items" :subtitle="`${inventoryItems.length} tracked cards`">
-      <DataTable
+      <Table
         :value="inventoryItems"
         dataKey="id"
         paginator
         :rows="20"
         :rowsPerPageOptions="[20, 50, 100]"
-        responsiveLayout="scroll"
       >
         <Column header="Card">
           <template #body="{ data }">
@@ -52,7 +51,7 @@
             />
           </template>
         </Column>
-      </DataTable>
+      </Table>
     </SectionCard>
   </AppLayout>
 </template>
@@ -61,11 +60,11 @@
 import { router } from '@inertiajs/vue3'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 
 import AppLayout from '@/components/AppLayout.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
 import TrackedStatus from '@/components/TrackedStatus.vue'
 
 interface InventoryItemRow {

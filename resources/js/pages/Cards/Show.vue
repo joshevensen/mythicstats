@@ -75,7 +75,7 @@
 
       <div class="lg:col-span-2">
         <SectionCard title="Variants" subtitle="Update pricing and metadata">
-          <DataTable :value="variantRows" dataKey="id" responsiveLayout="scroll">
+          <Table :value="variantRows" dataKey="id">
             <Column field="condition" header="Condition" />
             <Column field="printing" header="Printing" />
             <Column field="language" header="Language" />
@@ -101,7 +101,7 @@
                 />
               </template>
             </Column>
-          </DataTable>
+          </Table>
         </SectionCard>
       </div>
     </div>
@@ -113,15 +113,16 @@ import { computed, reactive } from 'vue'
 import { router, useForm } from '@inertiajs/vue3'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Textarea from 'primevue/textarea'
+import { useToast } from 'primevue/usetoast'
 
 import AppLayout from '@/components/AppLayout.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
 
 interface Variant {
   id: number
@@ -204,19 +205,26 @@ const variantEdits = reactive<Record<number, { price: number; processing: boolea
   )
 )
 
+const toast = useToast()
+
 function submitCard() {
   let detailsPayload: unknown = null
   if (cardForm.details) {
     try {
       detailsPayload = JSON.parse(cardForm.details)
     } catch (error) {
-      alert('Details must be valid JSON')
+      toast.add({
+        severity: 'error',
+        summary: 'Invalid JSON',
+        detail: 'Details must be valid JSON',
+        life: 5000,
+      })
       return
     }
   }
 
   cardForm
-    .transform((data) => ({
+    .transform((data: typeof cardForm.data) => ({
       ...data,
       details: detailsPayload,
     }))

@@ -76,7 +76,7 @@
 
       <div>
         <SectionCard title="Recent Price Updates" subtitle="Latest variant refreshes">
-          <DataTable :value="recentActivity.priceUpdates" size="small" dataKey="id">
+          <Table :value="recentActivity.priceUpdates" dataKey="id">
             <Column header="Card">
               <template #body="{ data }">
                 <div class="flex flex-col">
@@ -104,14 +104,14 @@
                 <span>{{ formatRelative(data.lastPriceUpdateAt) }}</span>
               </template>
             </Column>
-          </DataTable>
+          </Table>
         </SectionCard>
       </div>
     </div>
 
     <div class="mt-8">
       <SectionCard title="Recent Set Syncs" subtitle="Latest automated sync jobs">
-        <DataTable :value="recentActivity.syncs" size="small" dataKey="id">
+        <Table :value="recentActivity.syncs" dataKey="id">
           <Column header="Set">
             <template #body="{ data }">
               <div class="flex flex-col">
@@ -134,7 +134,7 @@
               <TrackedStatus :active="true" :timestamp="data.lastSyncAt" type="sync" />
             </template>
           </Column>
-        </DataTable>
+        </Table>
       </SectionCard>
     </div>
   </AppLayout>
@@ -145,7 +145,6 @@ import { computed } from 'vue'
 import { router } from '@inertiajs/vue3'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 import ProgressBar from 'primevue/progressbar'
 import Tag from 'primevue/tag'
 
@@ -153,6 +152,7 @@ import AppLayout from '@/components/AppLayout.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import StatCard from '@/components/StatCard.vue'
 import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
 import TrackedStatus from '@/components/TrackedStatus.vue'
 
 interface ApiStatus {

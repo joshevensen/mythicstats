@@ -20,13 +20,12 @@
     </PageHeader>
 
     <SectionCard title="Tracked Games" subtitle="Manage discovery cadence per game">
-      <DataTable
+      <Table
         :value="filteredGames"
         dataKey="id"
         paginator
         :rows="10"
         :rowsPerPageOptions="[10, 25, 50]"
-        responsiveLayout="scroll"
       >
         <Column field="name" header="Game" sortable />
         <Column header="Cards / Sets" sortable>
@@ -93,7 +92,7 @@
             </div>
           </template>
         </Column>
-      </DataTable>
+      </Table>
     </SectionCard>
   </AppLayout>
 </template>
@@ -103,13 +102,13 @@ import { computed, ref } from 'vue'
 import { router } from '@inertiajs/vue3'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Tag from 'primevue/tag'
 
 import AppLayout from '@/components/AppLayout.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
 import TrackedStatus from '@/components/TrackedStatus.vue'
 
 interface TrackedGame {

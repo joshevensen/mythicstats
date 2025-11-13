@@ -1,5 +1,5 @@
 <template>
-  <Card class="w-full">
+  <Card class="w-full p-4">
     <template #title>
       <div class="flex items-center justify-between">
         <span class="text-600 text-sm font-medium">{{ label }}</span>

@@ -46,7 +46,7 @@
 
       <div class="lg:col-span-2">
         <SectionCard title="Variants" subtitle="Update on-hand quantity">
-          <DataTable :value="inventoryItem.variants" dataKey="id" responsiveLayout="scroll">
+          <Table :value="inventoryItem.variants" dataKey="id">
             <Column header="Variant">
               <template #body="{ data }">
                 <div class="flex flex-col">
@@ -80,7 +80,7 @@
                 />
               </template>
             </Column>
-          </DataTable>
+          </Table>
         </SectionCard>
       </div>
     </div>
@@ -92,12 +92,12 @@ import { computed, reactive } from 'vue'
 import { router } from '@inertiajs/vue3'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 import InputNumber from 'primevue/inputnumber'
 
 import AppLayout from '@/components/AppLayout.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
 
 interface VariantDetail {
   id: number

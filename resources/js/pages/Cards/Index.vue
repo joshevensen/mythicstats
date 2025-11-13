@@ -22,13 +22,12 @@
     </PageHeader>
 
     <SectionCard title="Card List" :subtitle="`${cards.length} results`">
-      <DataTable
+      <Table
         :value="cards"
         dataKey="id"
         paginator
         :rows="25"
         :rowsPerPageOptions="[25, 50, 100]"
-        responsiveLayout="scroll"
       >
         <Column field="name" header="Name" sortable />
         <Column field="number" header="Number" sortable />
@@ -52,7 +51,7 @@
             />
           </template>
         </Column>
-      </DataTable>
+      </Table>
     </SectionCard>
   </AppLayout>
 </template>
@@ -62,13 +61,13 @@ import { computed } from 'vue'
 import { router, useForm } from '@inertiajs/vue3'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Tag from 'primevue/tag'
 
 import AppLayout from '@/components/AppLayout.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import SectionCard from '@/components/SectionCard.vue'
+import Table from '@/components/Table.vue'
 
 interface SetDetail {
   id: number
